@@ -1,0 +1,13 @@
+twitch:
+  bot:
+    prefix: 
+    channel: 
+    channel_id: 
+    username: 
+    oauth: 
+  helix:
+    client_id:
+    client_secret:
+
+api_keys:
+  lastfm:
