@@ -2,12 +2,12 @@ package bot
 
 import (
 	"fmt"
-	"log/slog"
 	"strings"
 
 	"github.com/esfands/retpaladinbot/internal/bot/commands"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/gempir/go-twitch-irc/v4"
+	"golang.org/x/exp/slog"
 )
 
 func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.PrivateMessage, commandManager *commands.CommandManager) {
