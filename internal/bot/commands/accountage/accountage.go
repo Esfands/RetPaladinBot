@@ -61,6 +61,7 @@ func (c *AccountAgeCommand) Code(user twitch.User, context []string) (string, er
 
 	// Check if the response responded with an unauthorized error or some other error
 	if res.Error != "" {
+		slog.Error("Twitch API error while fetching account age", "error", res.ErrorMessage)
 		return fmt.Sprintf("@%v, sorry, the Twitch API threw an error... Susge", user.Name), nil
 	}
 
