@@ -6,6 +6,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/followage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/game"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/ping"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/schedule"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/song"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/time"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/title"
@@ -43,5 +44,6 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		followage.NewFollowageCommand(cm.gctx),
 		uptime.NewUptimeCommand(cm.gctx),
 		dadjoke.NewDadJokeCommand(cm.gctx),
+		schedule.NewScheduleCommand(cm.gctx),
 	}
 }
