@@ -42,11 +42,11 @@ func (c *AccountAgeCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *AccountAgeCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *AccountAgeCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *AccountAgeCommand) Code(user twitch.User, context []string) (string, error) {

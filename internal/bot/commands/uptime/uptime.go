@@ -41,11 +41,11 @@ func (c *UptimeCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *UptimeCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *UptimeCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *UptimeCommand) Code(user twitch.User, context []string) (string, error) {

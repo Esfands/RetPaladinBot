@@ -40,11 +40,11 @@ func (c *PingCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *PingCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *PingCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *PingCommand) Code(user twitch.User, context []string) (string, error) {

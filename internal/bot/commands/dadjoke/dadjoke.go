@@ -44,11 +44,11 @@ func (c *DadJokeCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *DadJokeCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *DadJokeCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *DadJokeCommand) Code(user twitch.User, context []string) (string, error) {

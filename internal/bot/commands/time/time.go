@@ -42,11 +42,11 @@ func (c *TimeCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *TimeCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *TimeCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *TimeCommand) Code(user twitch.User, context []string) (string, error) {
