@@ -43,11 +43,11 @@ func (c *FollowageCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *FollowageCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *FollowageCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *FollowageCommand) Code(user twitch.User, context []string) (string, error) {

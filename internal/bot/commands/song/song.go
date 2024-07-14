@@ -45,11 +45,11 @@ func (c *SongCommand) Conditions() domain.DefaultCommandConditions {
 }
 
 func (c *SongCommand) UserCooldown() int {
-	return 10
+	return 30
 }
 
 func (c *SongCommand) GlobalCooldown() int {
-	return 30
+	return 10
 }
 
 func (c *SongCommand) Code(user twitch.User, context []string) (string, error) {
