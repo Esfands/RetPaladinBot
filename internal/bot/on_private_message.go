@@ -6,6 +6,7 @@ import (
 
 	"github.com/esfands/retpaladinbot/internal/bot/commands"
 	"github.com/esfands/retpaladinbot/internal/global"
+	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
 	"golang.org/x/exp/slog"
 )
@@ -37,6 +38,12 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 					return "", err
 				}
 
+				// Apply cooldown
+				isOnCooldown := utils.CooldownCanContinue(user, strings.ToLower(context[0]), dc.UserCooldown(), dc.GlobalCooldown())
+				if !isOnCooldown {
+					return "", nil
+				}
+
 				return response, nil
 
 			} else {
@@ -47,6 +54,12 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 						if err != nil {
 							slog.Error(err.Error())
 							return "", err
+						}
+
+						// Apply cooldown
+						isOnCooldown := utils.CooldownCanContinue(user, strings.ToLower(context[0]), dc.UserCooldown(), dc.GlobalCooldown())
+						if !isOnCooldown {
+							return "", nil
 						}
 
 						return response, nil
