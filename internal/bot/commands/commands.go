@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"strings"
-
 	"github.com/esfands/retpaladinbot/internal/bot/commands/accountage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/dadjoke"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/followage"
@@ -67,7 +65,7 @@ func (cm *CommandManager) saveDefaultCommands() {
 	for _, dc := range cm.DefaultCommands {
 		codebaseCommands[dc.Name()] = db.DefaultCommand{
 			Name:               dc.Name(),
-			Aliases:            strings.Join(dc.Aliases(), ","),
+			Aliases:            utils.ConvertSliceToJSONString(dc.Aliases()),
 			Permissions:        "",
 			Description:        dc.Description(),
 			DynamicDescription: utils.ConvertSliceToJSONString(dc.DynamicDescription()),
