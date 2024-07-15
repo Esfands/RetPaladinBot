@@ -37,6 +37,16 @@ func (c *SongCommand) Description() string {
 	return "Get the latest track Esfand has listened to."
 }
 
+func (c *SongCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gets the current song playing in the stream.",
+		"<br/>",
+		fmt.Sprintf("<code>%vsong</code>", prefix),
+	}
+}
+
 func (c *SongCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

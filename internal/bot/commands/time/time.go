@@ -34,6 +34,16 @@ func (c *TimeCommand) Description() string {
 	return "Returns the current time of Esfand in CST."
 }
 
+func (c *TimeCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gets the current time of Esfands local time in CST and military time.",
+		"<br/>",
+		fmt.Sprintf("<code>%vtime</code>", prefix),
+	}
+}
+
 func (c *TimeCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

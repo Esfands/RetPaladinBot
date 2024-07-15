@@ -35,6 +35,18 @@ func (c *FollowageCommand) Description() string {
 	return "Get your Twitch account age."
 }
 
+func (c *FollowageCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Returns your Twitch account age",
+		"<br/>",
+		fmt.Sprintf("<code>%vaccountage</code>", prefix),
+		"<br/>",
+		fmt.Sprintf("<code>%vaccountage @esfandtv</code>", prefix),
+	}
+}
+
 func (c *FollowageCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
