@@ -34,6 +34,16 @@ func (c *AccountAgeCommand) Description() string {
 	return "Check the age of your account."
 }
 
+func (c *AccountAgeCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Checks the age of your Twitch account",
+		"<br/>",
+		fmt.Sprintf("<code>%vaccountage</code>", prefix),
+	}
+}
+
 func (c *AccountAgeCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
