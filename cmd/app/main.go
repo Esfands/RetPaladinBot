@@ -127,7 +127,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		bot.StartBot(gctx, cfg, version)
+		bot.StartBot(gctx, cfg, Version)
 	}()
 
 	<-done

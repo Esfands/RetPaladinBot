@@ -25,7 +25,8 @@ type CommandManager struct {
 
 func NewCommandManager(gctx global.Context, version string) *CommandManager {
 	cm := &CommandManager{
-		gctx: gctx,
+		gctx:    gctx,
+		version: version,
 	}
 
 	cm.DefaultCommands = cm.loadDefaultCommands()
