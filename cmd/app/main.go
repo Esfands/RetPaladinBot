@@ -14,6 +14,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/internal/services/helix"
 	"github.com/esfands/retpaladinbot/internal/services/scheduler"
+	"github.com/esfands/retpaladinbot/internal/services/turso"
 	"golang.org/x/exp/slog"
 )
 
@@ -54,6 +55,19 @@ func main() {
 	}
 
 	gctx, cancel := global.WithCancel(global.New(context.Background(), cfg))
+
+	{
+		slog.Info("Setting up Turso database")
+		gctx.Crate().Turso, err = turso.Setup(gctx, turso.SetupOptions{
+			URL: cfg.Turso.URL,
+		})
+		if err != nil {
+			slog.Error("Error setting up Turso database", "error", err)
+			cancel()
+			return
+		}
+		slog.Info("Turso database setup complete")
+	}
 
 	{
 		slog.Info("Setting up scheduler")

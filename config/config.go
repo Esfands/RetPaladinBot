@@ -28,6 +28,10 @@ type Config struct {
 		} `mapstructure:"helix" json:"helix"`
 	} `mapstructure:"twitch" json:"twitch"`
 
+	Turso struct {
+		URL string `mapstructure:"url" json:"url"`
+	} `mapstructure:"turso" json:"turso"`
+
 	APIKeys struct {
 		LastFM string `mapstructure:"lastfm" json:"lastfm"`
 	} `mapstructure:"api_keys" json:"api_keys"`
