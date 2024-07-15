@@ -8,15 +8,18 @@ require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/nicklaw5/helix/v2 v2.30.0
 	github.com/spf13/viper v1.19.0
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240711072234-6d998acd081f
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8
 )
 
 require (
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
@@ -34,4 +37,5 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	nhooyr.io/websocket v1.8.10 // indirect
 )

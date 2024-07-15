@@ -9,5 +9,8 @@ twitch:
     client_id:
     client_secret:
 
+turso:
+  url: 
+
 api_keys:
   lastfm:
