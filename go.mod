@@ -6,6 +6,7 @@ require (
 	github.com/dghubble/sling v1.4.2
 	github.com/gempir/go-twitch-irc/v4 v4.0.0
 	github.com/go-co-op/gocron v1.37.0
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/nicklaw5/helix/v2 v2.30.0
 	github.com/spf13/viper v1.19.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240711072234-6d998acd081f
