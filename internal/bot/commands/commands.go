@@ -1,6 +1,9 @@
 package commands
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/esfands/retpaladinbot/internal/bot/commands/accountage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/dadjoke"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/followage"
@@ -10,8 +13,11 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/time"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/title"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/uptime"
+	"github.com/esfands/retpaladinbot/internal/db"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
+	"github.com/esfands/retpaladinbot/pkg/utils"
+	"golang.org/x/exp/slog"
 )
 
 type CommandManager struct {
@@ -27,7 +33,7 @@ func NewCommandManager(gctx global.Context) *CommandManager {
 	}
 
 	cm.DefaultCommands = cm.loadDefaultCommands()
-	// cm.saveDefaultCommands()
+	cm.saveDefaultCommands()
 
 	return cm
 }
@@ -44,4 +50,36 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		uptime.NewUptimeCommand(cm.gctx),
 		dadjoke.NewDadJokeCommand(cm.gctx),
 	}
+}
+
+func (cm *CommandManager) saveDefaultCommands() {
+	storedCommands, err := cm.gctx.Crate().Turso.Queries().GetAllDefaultCommands(cm.gctx)
+	if err != nil {
+		slog.Error("Failed to get stored default commands", "error", err)
+		return
+	}
+
+	// Empty database, store all commands
+	if len(storedCommands) == 0 {
+		for _, dc := range cm.DefaultCommands {
+			err = cm.gctx.Crate().Turso.Queries().InsertDefaultCommand(cm.gctx, db.DefaultCommand{
+				Name:               dc.Name(),
+				Aliases:            strings.Join(dc.Aliases(), ","),
+				Permissions:        "",
+				Description:        dc.Description(),
+				DynamicDescription: "",
+				GlobalCooldown:     dc.GlobalCooldown(),
+				UserCooldown:       dc.UserCooldown(),
+				OfflineOnly:        utils.BoolToInt(dc.Conditions().EnabledOffline),
+				OnlineOnly:         utils.BoolToInt(dc.Conditions().EnabledOnline),
+				UsageCount:         0,
+			})
+			if err != nil {
+				slog.Error("Failed to insert default command", "error", err)
+			}
+		}
+		return
+	}
+
+	fmt.Println(storedCommands)
 }

@@ -24,6 +24,7 @@ type Command struct {
 type DefaultCommand interface {
 	Name() string
 	Aliases() []string
+	Description() string
 	Conditions() DefaultCommandConditions
 	GlobalCooldown() int
 	UserCooldown() int
