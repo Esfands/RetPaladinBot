@@ -30,7 +30,19 @@ func (c *GameCommand) Aliases() []string {
 }
 
 func (c *GameCommand) Description() string {
-	return "Get the title of the stream."
+	return "Get the current category of the stream."
+}
+
+func (c *GameCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gives the current category of the stream",
+		"<br/>",
+		fmt.Sprintf("<code>%vgame</code>", prefix),
+		"<br/>",
+		fmt.Sprintf("<code>%vcategory</code>", prefix),
+	}
 }
 
 func (c *GameCommand) Conditions() domain.DefaultCommandConditions {

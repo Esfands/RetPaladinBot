@@ -33,6 +33,20 @@ func (c *HelpCommand) Description() string {
 	return "Gives you information about the bot."
 }
 
+func (c *HelpCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gives you information about the bot as well as the current version.",
+		"<br/>",
+		fmt.Sprintf("<code>%vhelp</code>", prefix),
+		"<br/>",
+		fmt.Sprintf("<code>%vabout</code>", prefix),
+		"<br/>",
+		fmt.Sprintf("<code>%vcommands</code>", prefix),
+	}
+}
+
 func (c *HelpCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

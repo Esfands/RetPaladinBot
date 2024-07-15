@@ -32,6 +32,16 @@ func (c *PingCommand) Description() string {
 	return "Ping the bot."
 }
 
+func (c *PingCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Pings the bot and returns the uptime.",
+		"<br/>",
+		fmt.Sprintf("<code>%vping</code>", prefix),
+	}
+}
+
 func (c *PingCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

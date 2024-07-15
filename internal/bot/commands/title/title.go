@@ -32,6 +32,16 @@ func (c *TitleCommand) Description() string {
 	return "Get the title of the stream."
 }
 
+func (c *TitleCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gets the current title of the stream.",
+		"<br/>",
+		fmt.Sprintf("<code>%vtitle</code>", prefix),
+	}
+}
+
 func (c *TitleCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

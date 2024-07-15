@@ -36,6 +36,16 @@ func (c *DadJokeCommand) Description() string {
 	return "Get a dad joke 4Head"
 }
 
+func (c *DadJokeCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gives you a classic dad joke.",
+		"<br/>",
+		fmt.Sprintf("<code>%vdadjoke</code>", prefix),
+	}
+}
+
 func (c *DadJokeCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,

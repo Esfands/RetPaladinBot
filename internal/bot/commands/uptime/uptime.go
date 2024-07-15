@@ -30,7 +30,17 @@ func (c *UptimeCommand) Aliases() []string {
 }
 
 func (c *UptimeCommand) Description() string {
-	return "Get the title of the stream."
+	return "Gets the current time elapsed since the stream started."
+}
+
+func (c *UptimeCommand) DynamicDescription() []string {
+	prefix := c.gctx.Config().Twitch.Bot.Prefix
+
+	return []string{
+		"Gets the current time elapsed since the stream started.",
+		"<br/>",
+		fmt.Sprintf("<code>%vuptime</code>", prefix),
+	}
 }
 
 func (c *UptimeCommand) Conditions() domain.DefaultCommandConditions {
