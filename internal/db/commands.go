@@ -31,14 +31,15 @@ type DefaultCommand struct {
 	DynamicDescription string
 	GlobalCooldown     int
 	UserCooldown       int
-	OfflineOnly        int
-	OnlineOnly         int
+	EnabledOffline     int
+	EnabledOnline      int
 	UsageCount         int
 }
 
+// InsertDefaultCommand inserts a new default command into the database
 func (q *Queries) InsertDefaultCommand(ctx context.Context, command DefaultCommand) error {
 	stmt, err := q.db.Prepare(
-		"INSERT INTO commands (name, aliases, permissions, description, dynamic_description, global_cooldown, user_cooldown, offline_only, online_only, usage_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO commands (name, aliases, permissions, description, dynamic_description, global_cooldown, user_cooldown, enabled_offline, enabled_online, usage_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 	)
 	if err != nil {
 		return err
@@ -53,19 +54,53 @@ func (q *Queries) InsertDefaultCommand(ctx context.Context, command DefaultComma
 		command.DynamicDescription,
 		command.GlobalCooldown,
 		command.UserCooldown,
-		command.OfflineOnly,
-		command.OnlineOnly,
+		command.EnabledOffline,
+		command.EnabledOnline,
 		command.UsageCount,
+	)
+	return err
+}
+
+// UpdateDefaultCommand updates an existing default command in the database
+func (q *Queries) UpdateDefaultCommand(ctx context.Context, command DefaultCommand) error {
+	stmt, err := q.db.Prepare(
+		"UPDATE commands SET aliases = ?, permissions = ?, description = ?, dynamic_description = ?, global_cooldown = ?, user_cooldown = ?, enabled_offline = ?, enabled_online = ?, usage_count = ? WHERE name = ?",
 	)
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 
-	return nil
+	_, err = stmt.Exec(
+		command.Aliases,
+		command.Permissions,
+		command.Description,
+		command.DynamicDescription,
+		command.GlobalCooldown,
+		command.UserCooldown,
+		command.EnabledOffline,
+		command.EnabledOnline,
+		command.UsageCount,
+		command.Name,
+	)
+	return err
 }
 
+// DeleteDefaultCommand deletes a default command from the database
+func (q *Queries) DeleteDefaultCommand(ctx context.Context, name string) error {
+	stmt, err := q.db.Prepare("DELETE FROM commands WHERE name = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(name)
+	return err
+}
+
+// GetAllDefaultCommands retrieves all default commands from the database
 func (q *Queries) GetAllDefaultCommands(ctx context.Context) ([]DefaultCommand, error) {
-	rows, err := q.db.QueryContext(ctx, "SELECT name, aliases, permissions, description, dynamic_description, global_cooldown, user_cooldown, offline_only, online_only, usage_count FROM commands")
+	rows, err := q.db.QueryContext(ctx, "SELECT name, aliases, permissions, description, dynamic_description, global_cooldown, user_cooldown, enabled_offline, enabled_online, usage_count FROM commands")
 	if err != nil {
 		return nil, err
 	}
@@ -74,14 +109,10 @@ func (q *Queries) GetAllDefaultCommands(ctx context.Context) ([]DefaultCommand, 
 	var commands []DefaultCommand
 	for rows.Next() {
 		var command DefaultCommand
-		if err := rows.Scan(&command.Name, &command.Aliases, &command.Permissions, &command.Description, &command.DynamicDescription, &command.GlobalCooldown, &command.UserCooldown, &command.OfflineOnly, &command.OnlineOnly, &command.UsageCount); err != nil {
+		if err := rows.Scan(&command.Name, &command.Aliases, &command.Permissions, &command.Description, &command.DynamicDescription, &command.GlobalCooldown, &command.UserCooldown, &command.EnabledOffline, &command.EnabledOnline, &command.UsageCount); err != nil {
 			return nil, err
 		}
 		commands = append(commands, command)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return commands, nil
+	return commands, rows.Err()
 }

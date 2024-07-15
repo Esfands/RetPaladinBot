@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -121,4 +122,24 @@ func BoolToInt(b bool) int {
 		return 1
 	}
 	return 0
+}
+
+// ConvertSliceToJSONString converts a slice of strings to a JSON-compatible string array
+func ConvertSliceToJSONString(slice []string) string {
+	// Quote each string in the slice
+	for i, str := range slice {
+		slice[i] = fmt.Sprintf(`"%s"`, str)
+	}
+	// Join the quoted elements with a comma and space, and wrap with square brackets
+	return fmt.Sprintf("[%s]", strings.Join(slice, ", "))
+}
+
+// ConvertJSONStringToSlice converts a JSON string array to a slice of strings
+func ConvertJSONStringToSlice(jsonStr string) ([]string, error) {
+	var slice []string
+	err := json.Unmarshal([]byte(jsonStr), &slice)
+	if err != nil {
+		return nil, err
+	}
+	return slice, nil
 }
