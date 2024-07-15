@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/esfands/retpaladinbot/internal/db"
+	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"golang.org/x/exp/slog"
 )
