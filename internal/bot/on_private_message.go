@@ -23,15 +23,11 @@ func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.Pri
 	}
 
 	// Insert chatter into the database
-	err = gctx.Crate().Turso.Queries().InsertChatter(gctx, db.Chatter{
+	gctx.Crate().Turso.Queries().InsertChatter(gctx, db.Chatter{
 		TID:         stringID,
 		Username:    message.User.Name,
 		DisplayName: message.User.DisplayName,
 	})
-	if err != nil {
-		slog.Error(err.Error())
-		return
-	}
 
 	response, err := handleCommand(gctx, commandManager, message.User, message.Message)
 	if err != nil {
