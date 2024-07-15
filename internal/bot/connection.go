@@ -15,7 +15,7 @@ type Connection struct {
 	ModuleManager  *modules.ModuleManager
 }
 
-func StartBot(gctx global.Context, cfg *config.Config) {
+func StartBot(gctx global.Context, cfg *config.Config, version string) {
 	conn := &Connection{}
 	var err error
 
@@ -26,7 +26,7 @@ func StartBot(gctx global.Context, cfg *config.Config) {
 		slog.Error("Error setting up bot modules", "error", err.Error())
 		return
 	}
-	commandManger := commands.NewCommandManager(gctx)
+	commandManger := commands.NewCommandManager(gctx, version)
 
 	conn.client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		conn.OnPrivateMessage(gctx, message, commandManger)

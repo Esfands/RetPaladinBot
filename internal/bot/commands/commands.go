@@ -5,6 +5,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/dadjoke"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/followage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/game"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/help"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/ping"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/song"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/time"
@@ -15,13 +16,14 @@ import (
 )
 
 type CommandManager struct {
-	gctx global.Context
+	gctx    global.Context
+	version string
 
 	DefaultCommands []domain.DefaultCommand
 	CustomCommands  []domain.Command
 }
 
-func NewCommandManager(gctx global.Context) *CommandManager {
+func NewCommandManager(gctx global.Context, version string) *CommandManager {
 	cm := &CommandManager{
 		gctx: gctx,
 	}
@@ -43,5 +45,6 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		followage.NewFollowageCommand(cm.gctx),
 		uptime.NewUptimeCommand(cm.gctx),
 		dadjoke.NewDadJokeCommand(cm.gctx),
+		help.NewHelpCommand(cm.gctx, cm.version),
 	}
 }
