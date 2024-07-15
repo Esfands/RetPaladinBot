@@ -2,7 +2,8 @@ package db
 
 import (
 	"context"
-	"log/slog"
+
+	"golang.org/x/exp/slog"
 )
 
 // Chatter represents the chatter model
