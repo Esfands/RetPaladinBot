@@ -28,6 +28,10 @@ func (c *PingCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *PingCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *PingCommand) Description() string {
 	return "Ping the bot."
 }

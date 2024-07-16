@@ -24,6 +24,7 @@ type Command struct {
 type DefaultCommand interface {
 	Name() string
 	Aliases() []string
+	Permissions() []Permission
 	Description() string
 	DynamicDescription() []string
 	Conditions() DefaultCommandConditions

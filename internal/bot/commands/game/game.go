@@ -29,6 +29,10 @@ func (c *GameCommand) Aliases() []string {
 	return []string{"category"}
 }
 
+func (c *GameCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *GameCommand) Description() string {
 	return "Get the current category of the stream."
 }

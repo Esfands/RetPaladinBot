@@ -33,6 +33,10 @@ func (c *SongCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *SongCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *SongCommand) Description() string {
 	return "Get the latest track Esfand has listened to."
 }

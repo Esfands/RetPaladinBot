@@ -64,7 +64,7 @@ func (q *Queries) InsertDefaultCommand(ctx context.Context, command DefaultComma
 // UpdateDefaultCommand updates an existing default command in the database
 func (q *Queries) UpdateDefaultCommand(ctx context.Context, command DefaultCommand) error {
 	stmt, err := q.db.Prepare(
-		"UPDATE commands SET aliases = ?, permissions = ?, description = ?, dynamic_description = ?, global_cooldown = ?, user_cooldown = ?, enabled_offline = ?, enabled_online = ?, usage_count = ? WHERE name = ?",
+		"UPDATE commands SET aliases = ?, permissions = ?, description = ?, dynamic_description = ?, global_cooldown = ?, user_cooldown = ?, enabled_offline = ?, enabled_online = ? WHERE name = ?",
 	)
 	if err != nil {
 		return err
@@ -80,7 +80,6 @@ func (q *Queries) UpdateDefaultCommand(ctx context.Context, command DefaultComma
 		command.UserCooldown,
 		command.EnabledOffline,
 		command.EnabledOnline,
-		command.UsageCount,
 		command.Name,
 	)
 	return err

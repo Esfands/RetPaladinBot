@@ -30,6 +30,10 @@ func (c *AccountAgeCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *AccountAgeCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *AccountAgeCommand) Description() string {
 	return "Check the age of your account."
 }

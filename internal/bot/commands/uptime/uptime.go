@@ -29,6 +29,10 @@ func (c *UptimeCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *UptimeCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *UptimeCommand) Description() string {
 	return "Gets the current time elapsed since the stream started."
 }

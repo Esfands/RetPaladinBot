@@ -66,7 +66,7 @@ func (cm *CommandManager) saveDefaultCommands() {
 		codebaseCommands[dc.Name()] = db.DefaultCommand{
 			Name:               dc.Name(),
 			Aliases:            utils.ConvertSliceToJSONString(dc.Aliases()),
-			Permissions:        "",
+			Permissions:        utils.ConvertSliceToJSONString(utils.ConvertPermissionsToStrings(dc.Permissions())),
 			Description:        dc.Description(),
 			DynamicDescription: utils.ConvertSliceToJSONString(dc.DynamicDescription()),
 			GlobalCooldown:     dc.GlobalCooldown(),

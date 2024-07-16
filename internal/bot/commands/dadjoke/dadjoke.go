@@ -32,6 +32,10 @@ func (c *DadJokeCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *DadJokeCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *DadJokeCommand) Description() string {
 	return "Get a dad joke 4Head"
 }

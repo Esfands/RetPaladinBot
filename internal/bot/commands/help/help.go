@@ -29,6 +29,10 @@ func (c *HelpCommand) Aliases() []string {
 	return []string{"about", "commands"}
 }
 
+func (c *HelpCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *HelpCommand) Description() string {
 	return "Gives you information about the bot."
 }

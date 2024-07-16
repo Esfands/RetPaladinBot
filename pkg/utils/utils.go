@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
@@ -142,4 +143,31 @@ func ConvertJSONStringToSlice(jsonStr string) ([]string, error) {
 		return nil, err
 	}
 	return slice, nil
+}
+
+// ParseBadgePermissions parses the badges of a user and parses the permissions from their Twitch badges
+func ParseBadges(badges map[string]int) []domain.Permission {
+	var permissions []domain.Permission
+
+	for badge := range badges {
+		switch badge {
+		case "broadcaster":
+			permissions = append(permissions, domain.PermissionBroadcaster)
+		case "moderator":
+			permissions = append(permissions, domain.PermissionModerator)
+		case "vip":
+			permissions = append(permissions, domain.PermissionVIP)
+		}
+	}
+
+	return permissions
+}
+
+// ConvertPermissionsToStrings converts a slice of Permission to a slice of string
+func ConvertPermissionsToStrings(permissions []domain.Permission) []string {
+	var result []string
+	for _, permission := range permissions {
+		result = append(result, string(permission))
+	}
+	return result
 }
