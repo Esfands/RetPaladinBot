@@ -74,8 +74,9 @@ func isCommandMatch(input string, command domain.DefaultCommand) bool {
 
 // Execute command with permission and cooldown checks
 func executeCommand(user twitch.User, context []string, command domain.DefaultCommand) (string, error) {
-	if !isUserPermitted(user, command.Permissions()) {
-		return "", nil
+	// Allow execution if the command has no required permissions
+	if len(command.Permissions()) > 0 && !isUserPermitted(user, command.Permissions()) {
+		return fmt.Sprintf("@%v, you don't have permission to use this command.", user.Name), nil
 	}
 
 	response, err := command.Code(user, context[1:])
