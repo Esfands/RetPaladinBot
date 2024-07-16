@@ -8,6 +8,7 @@ type CustomCommand struct {
 	UsageCount int
 }
 
+// InsertCustomCommand inserts a new custom command into the database
 func (q *Queries) InsertCustomCommand(ctx context.Context, command CustomCommand) error {
 	stmt, err := q.db.Prepare("INSERT INTO custom_commands (name, response, usage_count) VALUES (?, ?, ?)")
 	if err != nil {
@@ -21,6 +22,67 @@ func (q *Queries) InsertCustomCommand(ctx context.Context, command CustomCommand
 	}
 
 	return nil
+}
+
+// UpdateCustomCommand updates an existing custom command in the database
+func (q *Queries) UpdateCustomCommand(ctx context.Context, command CustomCommand) error {
+	stmt, err := q.db.Prepare("UPDATE custom_commands SET response = ? WHERE name = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(command.Response, command.Name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteCustomCommand deletes a custom command from the database
+func (q *Queries) DeleteCustomCommand(ctx context.Context, name string) error {
+	stmt, err := q.db.Prepare("DELETE FROM custom_commands WHERE name = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetAllCustomCommands retrieves all custom commands from the database
+func (q *Queries) GetAllCustomCommands(ctx context.Context) ([]CustomCommand, error) {
+	rows, err := q.db.QueryContext(ctx, "SELECT name, response, usage_count FROM custom_commands")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var commands []CustomCommand
+	for rows.Next() {
+		var command CustomCommand
+		if err := rows.Scan(&command.Name, &command.Response, &command.UsageCount); err != nil {
+			return nil, err
+		}
+		commands = append(commands, command)
+	}
+	return commands, rows.Err()
+}
+
+// GetCustomCommand retrieves a specific custom command from the database
+func (q *Queries) GetCustomCommand(ctx context.Context, name string) (CustomCommand, error) {
+	var command CustomCommand
+	err := q.db.QueryRowContext(ctx, "SELECT name, response, usage_count FROM custom_commands WHERE name = ?", name).Scan(&command.Name, &command.Response, &command.UsageCount)
+	if err != nil {
+		return CustomCommand{}, err
+	}
+	return command, nil
 }
 
 type DefaultCommand struct {

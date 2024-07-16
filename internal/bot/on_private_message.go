@@ -33,6 +33,7 @@ func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.Pri
 	response, err := handleCommand(gctx, commandManager, message.User, message.Message)
 	if err != nil {
 		slog.Error(err.Error())
+		conn.client.Say(message.Channel, fmt.Sprintf("Something went wrong... error: %v", err.Error()))
 		return
 	}
 
@@ -102,6 +103,22 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 	for _, dc := range commandManager.DefaultCommands {
 		if isCommandMatch(context[0], dc) {
 			return executeCommand(user, context, dc)
+		}
+	}
+
+	// Check for custom commands
+	for _, cc := range commandManager.CustomCommands {
+		if context[0] == cc.Name {
+			// Bypass the cooldown for broadcaster and moderator
+			if user.Badges["broadcaster"] == 1 || user.Badges["moderator"] == 1 {
+				return cc.Response, nil
+			}
+
+			if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), 30, 10) {
+				return "", nil
+			}
+
+			return cc.Response, nil
 		}
 	}
 
