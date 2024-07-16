@@ -8,6 +8,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands"
 	"github.com/esfands/retpaladinbot/internal/db"
 	"github.com/esfands/retpaladinbot/internal/global"
+	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
 	"golang.org/x/exp/slog"
@@ -38,49 +39,68 @@ func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.Pri
 	conn.client.Say(message.Channel, response)
 }
 
-func handleCommand(gctx global.Context, commandManager *commands.CommandManager, user twitch.User, msg string) (string, error) {
-	if msg[0:len(gctx.Config().Twitch.Bot.Prefix)] == gctx.Config().Twitch.Bot.Prefix {
-		msg = msg[len(gctx.Config().Twitch.Bot.Prefix):]
+// Map Twitch badges to domain permissions
+var badgeToPermission = map[string]domain.Permission{
+	"broadcaster": domain.PermissionBroadcaster,
+	"moderator":   domain.PermissionModerator,
+	"vip":         domain.PermissionVIP,
+}
 
-		context := strings.Split(msg, " ")
-
-		for _, dc := range commandManager.DefaultCommands {
-			// Found default command by name
-			if context[0] == dc.Name() {
-				response, err := dc.Code(user, context[1:])
-				if err != nil {
-					slog.Error(err.Error())
-					return "", err
-				}
-
-				// Apply cooldown
-				isOnCooldown := utils.CooldownCanContinue(user, strings.ToLower(context[0]), dc.UserCooldown(), dc.GlobalCooldown())
-				if !isOnCooldown {
-					return "", nil
-				}
-
-				return response, nil
-
-			} else {
-				for _, alias := range dc.Aliases() {
-					// Found default command by alias
-					if context[0] == alias {
-						response, err := dc.Code(user, context[1:])
-						if err != nil {
-							slog.Error(err.Error())
-							return "", err
-						}
-
-						// Apply cooldown
-						isOnCooldown := utils.CooldownCanContinue(user, strings.ToLower(context[0]), dc.UserCooldown(), dc.GlobalCooldown())
-						if !isOnCooldown {
-							return "", nil
-						}
-
-						return response, nil
-					}
+func isUserPermitted(user twitch.User, requiredPermissions []domain.Permission) bool {
+	for badge := range user.Badges {
+		if permission, exists := badgeToPermission[badge]; exists {
+			for _, requiredPermission := range requiredPermissions {
+				if permission == requiredPermission {
+					return true
 				}
 			}
+		}
+	}
+	return false
+}
+
+// Check if the command name or alias matches the input
+func isCommandMatch(input string, command domain.DefaultCommand) bool {
+	if input == command.Name() {
+		return true
+	}
+	for _, alias := range command.Aliases() {
+		if input == alias {
+			return true
+		}
+	}
+	return false
+}
+
+// Execute command with permission and cooldown checks
+func executeCommand(user twitch.User, context []string, command domain.DefaultCommand) (string, error) {
+	if !isUserPermitted(user, command.Permissions()) {
+		return "", nil
+	}
+
+	response, err := command.Code(user, context[1:])
+	if err != nil {
+		return "", err
+	}
+
+	if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), command.UserCooldown(), command.GlobalCooldown()) {
+		return "", nil
+	}
+
+	return response, nil
+}
+
+func handleCommand(gctx global.Context, commandManager *commands.CommandManager, user twitch.User, msg string) (string, error) {
+	if !strings.HasPrefix(msg, gctx.Config().Twitch.Bot.Prefix) {
+		return "", nil
+	}
+
+	msg = strings.TrimPrefix(msg, gctx.Config().Twitch.Bot.Prefix)
+	context := strings.Split(msg, " ")
+
+	for _, dc := range commandManager.DefaultCommands {
+		if isCommandMatch(context[0], dc) {
+			return executeCommand(user, context, dc)
 		}
 	}
 

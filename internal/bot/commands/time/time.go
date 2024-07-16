@@ -30,6 +30,10 @@ func (c *TimeCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *TimeCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *TimeCommand) Description() string {
 	return "Returns the current time of Esfand in CST."
 }

@@ -28,6 +28,10 @@ func (c *TitleCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *TitleCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *TitleCommand) Description() string {
 	return "Get the title of the stream."
 }

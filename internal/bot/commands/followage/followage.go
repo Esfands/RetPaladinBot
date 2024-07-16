@@ -31,6 +31,10 @@ func (c *FollowageCommand) Aliases() []string {
 	return []string{}
 }
 
+func (c *FollowageCommand) Permissions() []domain.Permission {
+	return []domain.Permission{}
+}
+
 func (c *FollowageCommand) Description() string {
 	return "Get your Twitch account age."
 }
