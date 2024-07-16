@@ -109,6 +109,10 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 	// Check for custom commands
 	for _, cc := range commandManager.CustomCommands {
 		if context[0] == cc.Name {
+			if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), 30, 10) {
+				return "", nil
+			}
+
 			return cc.Response, nil
 		}
 	}
