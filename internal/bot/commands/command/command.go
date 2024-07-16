@@ -51,6 +51,12 @@ func (c *CommandCommand) DynamicDescription() []string {
 		"Create a command with a name and message",
 		"<br/>",
 		fmt.Sprintf("<code>%vcommand create (name) (response)</code>", prefix),
+		"<br/>",
+		"Edit a command with a name and message",
+		fmt.Sprintf("<code>%vcommand edit (name) (response)</code>", prefix),
+		"<br/>",
+		"Delete a command with a name",
+		fmt.Sprintf("<code>%vcommand delete (name)</code>", prefix),
 	}
 }
 
