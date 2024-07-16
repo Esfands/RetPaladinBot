@@ -109,6 +109,11 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 	// Check for custom commands
 	for _, cc := range commandManager.CustomCommands {
 		if context[0] == cc.Name {
+			// Bypass the cooldown for broadcaster and moderator
+			if user.Badges["broadcaster"] == 1 || user.Badges["moderator"] == 1 {
+				return cc.Response, nil
+			}
+
 			if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), 30, 10) {
 				return "", nil
 			}
