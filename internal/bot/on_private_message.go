@@ -33,6 +33,7 @@ func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.Pri
 	response, err := handleCommand(gctx, commandManager, message.User, message.Message)
 	if err != nil {
 		slog.Error(err.Error())
+		conn.client.Say(message.Channel, fmt.Sprintf("Something went wrong... error: %v", err.Error()))
 		return
 	}
 
@@ -102,6 +103,13 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 	for _, dc := range commandManager.DefaultCommands {
 		if isCommandMatch(context[0], dc) {
 			return executeCommand(user, context, dc)
+		}
+	}
+
+	// Check for custom commands
+	for _, cc := range commandManager.CustomCommands {
+		if context[0] == cc.Name {
+			return cc.Response, nil
 		}
 	}
 

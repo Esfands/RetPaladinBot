@@ -6,6 +6,11 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
+type CustomCommand struct {
+	Name     string `json:"name" bson:"name"`
+	Response string `json:"response" bson:"response"`
+}
+
 type Command struct {
 	ID             string     `json:"id"`
 	Name           string     `json:"name" bson:"name"`

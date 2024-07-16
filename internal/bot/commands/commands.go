@@ -1,7 +1,11 @@
 package commands
 
 import (
+	"context"
+	"errors"
+
 	"github.com/esfands/retpaladinbot/internal/bot/commands/accountage"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/command"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/dadjoke"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/followage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/game"
@@ -11,6 +15,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/time"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/title"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/uptime"
+	"github.com/esfands/retpaladinbot/internal/cmdmanager"
 	"github.com/esfands/retpaladinbot/internal/db"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
@@ -23,7 +28,7 @@ type CommandManager struct {
 	version string
 
 	DefaultCommands []domain.DefaultCommand
-	CustomCommands  []domain.Command
+	CustomCommands  []domain.CustomCommand
 }
 
 func NewCommandManager(gctx global.Context, version string) *CommandManager {
@@ -32,8 +37,15 @@ func NewCommandManager(gctx global.Context, version string) *CommandManager {
 		version: version,
 	}
 
+	// Load the default commands locally and then save them to database
 	cm.DefaultCommands = cm.loadDefaultCommands()
 	cm.saveDefaultCommands()
+
+	// Load the custom commands
+	err := cm.loadCustomCommands()
+	if err != nil {
+		slog.Error("Failed to load custom commands", "error", err)
+	}
 
 	return cm
 }
@@ -50,6 +62,7 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		uptime.NewUptimeCommand(cm.gctx),
 		dadjoke.NewDadJokeCommand(cm.gctx),
 		help.NewHelpCommand(cm.gctx, cm.version),
+		command.NewCommandCommand(cm.gctx, cm),
 	}
 }
 
@@ -105,3 +118,76 @@ func (cm *CommandManager) saveDefaultCommands() {
 		}
 	}
 }
+
+func (cm *CommandManager) loadCustomCommands() error {
+	commands, err := cm.gctx.Crate().Turso.Queries().GetAllCustomCommands(cm.gctx)
+	if err != nil {
+		return err
+	}
+
+	for _, customCommand := range commands {
+		cm.CustomCommands = append(cm.CustomCommands, domain.CustomCommand{
+			Name:     customCommand.Name,
+			Response: customCommand.Response,
+		})
+	}
+
+	return nil
+}
+
+func (cm *CommandManager) AddCustomCommand(cmd domain.CustomCommand) error {
+	if cm.CustomCommandExists(cmd.Name) {
+		return errors.New("command already exists")
+	}
+	cm.CustomCommands = append(cm.CustomCommands, cmd)
+	// Insert into database
+	err := cm.gctx.Crate().Turso.Queries().InsertCustomCommand(context.Background(), db.CustomCommand{
+		Name:       cmd.Name,
+		Response:   cmd.Response,
+		UsageCount: 0,
+	})
+	return err
+}
+
+func (cm *CommandManager) UpdateCustomCommand(cmd domain.CustomCommand) error {
+	for i, existingCmd := range cm.CustomCommands {
+		if existingCmd.Name == cmd.Name {
+			cm.CustomCommands[i].Response = cmd.Response
+			// Update in database
+			err := cm.gctx.Crate().Turso.Queries().UpdateCustomCommand(context.Background(), db.CustomCommand{
+				Name:     cmd.Name,
+				Response: cmd.Response,
+			})
+			return err
+		}
+	}
+	return errors.New("command does not exist")
+}
+
+func (cm *CommandManager) DeleteCustomCommand(name string) error {
+	for i, cmd := range cm.CustomCommands {
+		if cmd.Name == name {
+			cm.CustomCommands = append(cm.CustomCommands[:i], cm.CustomCommands[i+1:]...)
+			// Delete from database
+			err := cm.gctx.Crate().Turso.Queries().DeleteCustomCommand(context.Background(), name)
+			return err
+		}
+	}
+	return errors.New("command does not exist")
+}
+
+func (cm *CommandManager) CustomCommandExists(name string) bool {
+	for _, cmd := range cm.CustomCommands {
+		if cmd.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (cm *CommandManager) GetCustomCommands() []domain.CustomCommand {
+	return cm.CustomCommands
+}
+
+// Ensure CommandManager implements CommandManagerInterface
+var _ cmdmanager.CommandManagerInterface = (*CommandManager)(nil)
