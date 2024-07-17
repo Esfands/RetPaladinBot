@@ -12,6 +12,7 @@ import (
 	"github.com/esfands/retpaladinbot/config"
 	"github.com/esfands/retpaladinbot/internal/bot"
 	"github.com/esfands/retpaladinbot/internal/global"
+	"github.com/esfands/retpaladinbot/internal/rest"
 	"github.com/esfands/retpaladinbot/internal/services/helix"
 	"github.com/esfands/retpaladinbot/internal/services/scheduler"
 	"github.com/esfands/retpaladinbot/internal/services/turso"
@@ -123,11 +124,23 @@ func main() {
 		close(done)
 	}()
 
-	wg.Add(1)
+	wg.Add(2)
 	go func() {
 		defer wg.Done()
 
 		bot.StartBot(gctx, cfg, Version)
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		slog.Info("Starting API server")
+		if err := rest.New(gctx); err != nil {
+			slog.Error("Error starting API server", "error", err)
+			cancel()
+			return
+		}
+		slog.Info("API server stopped")
 	}()
 
 	<-done

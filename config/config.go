@@ -28,6 +28,13 @@ type Config struct {
 		} `mapstructure:"helix" json:"helix"`
 	} `mapstructure:"twitch" json:"twitch"`
 
+	HTTP struct {
+		Address string `mapstructure:"address" json:"address"`
+		Ports   struct {
+			REST string `mapstructure:"rest" json:"rest"`
+		} `mapstructure:"ports" json:"ports"`
+	} `mapstructure:"http" json:"http"`
+
 	Turso struct {
 		URL string `mapstructure:"url" json:"url"`
 	} `mapstructure:"turso" json:"turso"`
