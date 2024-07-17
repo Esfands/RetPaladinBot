@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/esfands/retpaladinbot/internal/bot/commands"
+	"github.com/esfands/retpaladinbot/internal/bot/variables"
 	"github.com/esfands/retpaladinbot/internal/db"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
@@ -14,7 +15,7 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.PrivateMessage, commandManager *commands.CommandManager) {
+func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.PrivateMessage, commandManager *commands.CommandManager, variables variables.ServiceI) {
 	slog.Debug(fmt.Sprintf("[%v] %v: %v", message.Channel, message.User.DisplayName, message.Message))
 
 	stringID, err := strconv.Atoi(message.User.ID)
@@ -30,7 +31,7 @@ func (conn *Connection) OnPrivateMessage(gctx global.Context, message twitch.Pri
 		DisplayName: message.User.DisplayName,
 	})
 
-	response, err := handleCommand(gctx, commandManager, message.User, message.Message)
+	response, err := handleCommand(gctx, variables, commandManager, message.User, message.Message)
 	if err != nil {
 		slog.Error(err.Error())
 		conn.client.Say(message.Channel, fmt.Sprintf("Something went wrong... error: %v", err.Error()))
@@ -98,7 +99,7 @@ func executeCommand(gctx global.Context, user twitch.User, context []string, com
 	return response, nil
 }
 
-func handleCommand(gctx global.Context, commandManager *commands.CommandManager, user twitch.User, msg string) (string, error) {
+func handleCommand(gctx global.Context, variables variables.ServiceI, commandManager *commands.CommandManager, user twitch.User, msg string) (string, error) {
 	if !strings.HasPrefix(msg, gctx.Config().Twitch.Bot.Prefix) {
 		return "", nil
 	}
@@ -122,7 +123,9 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 					slog.Error("Failed to update custom command usage", "error", err.Error())
 				}
 
-				return cc.Response, nil
+				parsedResponse := variables.ParseVariables(gctx, user, strings.Split(msg, " "), strings.Split(cc.Response, " "))
+
+				return parsedResponse, nil
 			}
 
 			if !utils.CooldownCanContinue(user, strings.ToLower(cc.Name), 30, 10) {
@@ -134,7 +137,9 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 				slog.Error("Failed to update custom command usage", "error", err.Error())
 			}
 
-			return cc.Response, nil
+			parsedResponse := variables.ParseVariables(gctx, user, strings.Split(msg, " "), strings.Split(cc.Response, " "))
+
+			return parsedResponse, nil
 		}
 	}
 
