@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"strings"
 	"time"
@@ -170,4 +171,16 @@ func ConvertPermissionsToStrings(permissions []domain.Permission) []string {
 		result = append(result, string(permission))
 	}
 	return result
+}
+
+func GetRandomStringFromSlice(slice []string) string {
+	// Seed the random number generator
+	source := rand.NewSource(time.Now().UnixNano())
+	rng := rand.New(source)
+
+	// Get a random index from the slice
+	randomIndex := rng.Intn(len(slice))
+
+	// Return the string at the random index
+	return slice[randomIndex]
 }

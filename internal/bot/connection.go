@@ -32,6 +32,10 @@ func StartBot(gctx global.Context, cfg *config.Config, version string) {
 		conn.OnPrivateMessage(gctx, message, commandManger)
 	})
 
+	conn.client.OnUserNoticeMessage(func(message twitch.UserNoticeMessage) {
+		OnUserNoticeMessage(conn.client, message)
+	})
+
 	conn.client.Join(cfg.Twitch.Bot.Channel)
 
 	go func() {
