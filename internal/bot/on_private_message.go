@@ -74,7 +74,7 @@ func isCommandMatch(input string, command domain.DefaultCommand) bool {
 }
 
 // Execute command with permission and cooldown checks
-func executeCommand(user twitch.User, context []string, command domain.DefaultCommand) (string, error) {
+func executeCommand(gctx global.Context, user twitch.User, context []string, command domain.DefaultCommand) (string, error) {
 	// Allow execution if the command has no required permissions
 	if len(command.Permissions()) > 0 && !isUserPermitted(user, command.Permissions()) {
 		return fmt.Sprintf("@%v, you don't have permission to use this command.", user.Name), nil
@@ -87,6 +87,12 @@ func executeCommand(user twitch.User, context []string, command domain.DefaultCo
 
 	if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), command.UserCooldown(), command.GlobalCooldown()) {
 		return "", nil
+	}
+
+	// Update usage
+	err = gctx.Crate().Turso.Queries().IncrementDefaultCommandUsageCount(gctx, command.Name())
+	if err != nil {
+		slog.Error("Failed to update default command usage", "error", err.Error())
 	}
 
 	return response, nil
@@ -102,7 +108,7 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 
 	for _, dc := range commandManager.DefaultCommands {
 		if isCommandMatch(context[0], dc) {
-			return executeCommand(user, context, dc)
+			return executeCommand(gctx, user, context, dc)
 		}
 	}
 
@@ -111,11 +117,21 @@ func handleCommand(gctx global.Context, commandManager *commands.CommandManager,
 		if context[0] == cc.Name {
 			// Bypass the cooldown for broadcaster and moderator
 			if user.Badges["broadcaster"] == 1 || user.Badges["moderator"] == 1 {
+				err := gctx.Crate().Turso.Queries().IncrementCustomCommandUsageCount(gctx, strings.ToLower(cc.Name))
+				if err != nil {
+					slog.Error("Failed to update custom command usage", "error", err.Error())
+				}
+
 				return cc.Response, nil
 			}
 
-			if !utils.CooldownCanContinue(user, strings.ToLower(context[0]), 30, 10) {
+			if !utils.CooldownCanContinue(user, strings.ToLower(cc.Name), 30, 10) {
 				return "", nil
+			}
+
+			err := gctx.Crate().Turso.Queries().IncrementCustomCommandUsageCount(gctx, strings.ToLower(cc.Name))
+			if err != nil {
+				slog.Error("Failed to update custom command usage", "error", err.Error())
 			}
 
 			return cc.Response, nil
