@@ -40,6 +40,21 @@ func (q *Queries) UpdateCustomCommand(ctx context.Context, command CustomCommand
 	return nil
 }
 
+func (q *Queries) IncrementCustomCommandUsageCount(ctx context.Context, name string) error {
+	stmt, err := q.db.Prepare("UPDATE custom_commands SET usage_count = usage_count + 1 WHERE name = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // DeleteCustomCommand deletes a custom command from the database
 func (q *Queries) DeleteCustomCommand(ctx context.Context, name string) error {
 	stmt, err := q.db.Prepare("DELETE FROM custom_commands WHERE name = ?")
@@ -144,6 +159,18 @@ func (q *Queries) UpdateDefaultCommand(ctx context.Context, command DefaultComma
 		command.EnabledOnline,
 		command.Name,
 	)
+	return err
+}
+
+// IncrementDefaultCommandUsageCount increments the usage count of a default command in the database
+func (q *Queries) IncrementDefaultCommandUsageCount(ctx context.Context, name string) error {
+	stmt, err := q.db.Prepare("UPDATE commands SET usage_count = usage_count + 1 WHERE name = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(name)
 	return err
 }
 
