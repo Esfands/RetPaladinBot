@@ -26,11 +26,11 @@ func StartBot(gctx global.Context, cfg *config.Config, version string) {
 		slog.Error("Error setting up bot modules", "error", err.Error())
 		return
 	}
-	// commandManger := commands.NewCommandManager(gctx, version)
+	commandManger := commands.NewCommandManager(gctx, version)
 
-	/* conn.client.OnPrivateMessage(func(message twitch.PrivateMessage) {
+	conn.client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		conn.OnPrivateMessage(gctx, message, commandManger)
-	}) */
+	})
 
 	conn.client.OnUserNoticeMessage(func(message twitch.UserNoticeMessage) {
 		OnUserNoticeMessage(conn.client, message)
