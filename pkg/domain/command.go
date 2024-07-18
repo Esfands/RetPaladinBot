@@ -1,29 +1,26 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
 type CustomCommand struct {
-	Name     string `json:"name" bson:"name"`
-	Response string `json:"response" bson:"response"`
+	Name       string `json:"name"`
+	Response   string `json:"response"`
+	UsageCount int    `json:"usage_count"`
 }
 
 type Command struct {
-	ID             string     `json:"id"`
-	Name           string     `json:"name" bson:"name"`
-	Aliases        []string   `json:"aliases" bson:"aliases"`
-	Default        bool       `json:"default" bson:"default"`
-	Response       string     `json:"response" bson:"response"`
-	Enabled        bool       `json:"enabled" bson:"enabled"`
-	EnabledOnline  bool       `json:"enabled_online" bson:"enabled_online"`
-	EnabledOffline bool       `json:"enabled_offline" bson:"enabled_offline"`
-	GlobalCooldown int        `json:"global_cooldown" bson:"global_cooldown"`
-	UserCooldown   int        `json:"user_cooldown" bson:"user_cooldown"`
-	UpdatedAt      *time.Time `json:"updated_at" bson:"updated_at"`
-	CreatedAt      time.Time  `json:"created_at" bson:"created_at"`
+	Name               string       `json:"name"`
+	Aliases            []string     `json:"aliases"`
+	Permissions        []Permission `json:"permissions"`
+	Description        string       `json:"description"`
+	DynamicDescription []string     `json:"dynamic_description"`
+	GlobalCooldown     int          `json:"global_cooldown"`
+	UserCooldown       int          `json:"user_cooldown"`
+	EnabledOffline     bool         `json:"enabled_offline"`
+	EnabledOnline      bool         `json:"enabled_online"`
+	UsageCount         int          `json:"usage_count"`
 }
 
 type DefaultCommand interface {
