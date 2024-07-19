@@ -26,7 +26,7 @@ func StartBot(gctx global.Context, cfg *config.Config, version string) {
 	// Register variables
 	conn.Variables = variables.NewService(gctx)
 
-	conn.ModuleManager, err = modules.NewModuleManager(gctx, conn.client)
+	conn.ModuleManager, err = modules.NewModuleManager(gctx, conn.client, cfg.Twitch.Bot.ChannelID)
 	if err != nil {
 		slog.Error("Error setting up bot modules", "error", err.Error())
 		return
