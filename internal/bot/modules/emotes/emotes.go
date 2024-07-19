@@ -515,9 +515,8 @@ func (em *EmoteModule) handleDispatchPayload(payload Event) {
 				if change.Key == "emotes" {
 					if emote, ok := change.Value.(map[string]interface{}); ok {
 						if name, exists := emote["name"].(string); exists {
-							fmt.Println("Emote added:", name)
+							fmt.Println("7tv emote added:", name)
 							em.SevenTVChannelEmotes = append(em.SevenTVChannelEmotes, name)
-							fmt.Println(em.SevenTVChannelEmotes)
 						}
 					}
 				}
@@ -531,7 +530,7 @@ func (em *EmoteModule) handleDispatchPayload(payload Event) {
 					if change.Key == "emotes" {
 						if emote, ok := change.OldValue.(map[string]interface{}); ok {
 							if name, exists := emote["name"].(string); exists {
-								fmt.Println("Emote removed:", name)
+								fmt.Println("7tv emote removed:", name)
 								// Remove the emote from SevenTVChannelEmotes
 								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
 								if index != -1 {
@@ -547,7 +546,7 @@ func (em *EmoteModule) handleDispatchPayload(payload Event) {
 					if change.Key == "emotes" {
 						if emote, ok := change.OldValue.(map[string]interface{}); ok {
 							if name, exists := emote["name"].(string); exists {
-								fmt.Println("Emote removed:", name)
+								fmt.Println("7tv emote removed:", name)
 								// Remove the emote from SevenTVChannelEmotes
 								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
 								if index != -1 {
@@ -563,7 +562,7 @@ func (em *EmoteModule) handleDispatchPayload(payload Event) {
 					if change.Key == "emotes" {
 						if emote, ok := change.OldValue.(map[string]interface{}); ok {
 							if name, exists := emote["name"].(string); exists {
-								fmt.Println("Emote removed:", name)
+								fmt.Println("7tv emote removed:", name)
 								// Remove the emote from SevenTVChannelEmotes
 								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
 								if index != -1 {
