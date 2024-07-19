@@ -90,7 +90,7 @@ func New(gctx global.Context) error {
 	// Listen for connections in a separate goroutine.
 	// When Listen returns, send the error (or nil if none) on errCh.
 	go func() {
-		if err := app.Listen(fmt.Sprintf("%v:%v", gctx.Config().HTTP.Address, gctx.Config().HTTP.Ports.REST)); err != nil {
+		if err := app.Listen(fmt.Sprintf("%v:%v", "0.0.0.0", "3000")); err != nil {
 			errCh <- err
 		} else {
 			errCh <- nil
