@@ -177,115 +177,8 @@ type DispatchPayload struct {
 }
 
 type Event struct {
-	Type string `json:"type"`
-	Body Body   `json:"body"`
-}
-
-type Body struct {
-	ID      string   `json:"id"`
-	Kind    int      `json:"kind"`
-	Actor   Actor    `json:"actor"`
-	Pulled  []Pulled `json:"pulled"`
-	Pushed  []Pushed `json:"pushed"`
-	Removed []Pushed `json:"removed"`
-	Updated []Pushed `json:"updated"`
-}
-
-type Actor struct {
-	ID          string       `json:"id"`
-	Type        string       `json:"type"`
-	Username    string       `json:"username"`
-	DisplayName string       `json:"display_name"`
-	AvatarURL   string       `json:"avatar_url"`
-	Style       Style        `json:"style"`
-	Roles       []string     `json:"roles"`
-	Connections []Connection `json:"connections"`
-}
-
-type Style struct {
-	Color   int     `json:"color"`
-	PaintID *string `json:"paint_id"`
-	BadgeID *string `json:"badge_id"`
-	Paint   *string `json:"paint"`
-	Badge   *string `json:"badge"`
-}
-
-type Connection struct {
-	ID            string `json:"id"`
-	Platform      string `json:"platform"`
-	Username      string `json:"username"`
-	DisplayName   string `json:"display_name"`
-	LinkedAt      int64  `json:"linked_at"`
-	EmoteCapacity int    `json:"emote_capacity"`
-	EmoteSetID    string `json:"emote_set_id"`
-}
-
-type Pulled struct {
-	Key      string  `json:"key"`
-	Index    int     `json:"index"`
-	Type     string  `json:"type"`
-	OldValue Emote   `json:"old_value"`
-	Value    *string `json:"value"` // Value is null when an emote is removed
-}
-
-type Pushed struct {
-	Key      string `json:"key"`
-	Index    int    `json:"index"`
-	Type     string `json:"type"`
-	OldValue Emote  `json:"old_value"`
-	Value    Value  `json:"value"`
-}
-
-type Emote struct {
-	ActorID   string `json:"actor_id"`
-	Flags     int    `json:"flags"`
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Timestamp int64  `json:"timestamp"`
-}
-
-type Value struct {
-	ActorID   string `json:"actor_id"`
-	Data      Data   `json:"data"`
-	Flags     int    `json:"flags"`
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Timestamp int64  `json:"timestamp"`
-}
-
-type Data struct {
-	Animated  bool     `json:"animated"`
-	Flags     int      `json:"flags"`
-	Host      Host     `json:"host"`
-	ID        string   `json:"id"`
-	Lifecycle int      `json:"lifecycle"`
-	Listed    bool     `json:"listed"`
-	Name      string   `json:"name"`
-	Owner     Owner    `json:"owner"`
-	State     []string `json:"state"`
-}
-
-type Host struct {
-	Files []File `json:"files"`
-	URL   string `json:"url"`
-}
-
-type File struct {
-	Format     string `json:"format"`
-	FrameCount int    `json:"frame_count"`
-	Height     int    `json:"height"`
-	Name       string `json:"name"`
-	Size       int    `json:"size"`
-	StaticName string `json:"static_name"`
-	Width      int    `json:"width"`
-}
-
-type Owner struct {
-	AvatarURL   string `json:"avatar_url"`
-	DisplayName string `json:"display_name"`
-	ID          string `json:"id"`
-	Style       Style  `json:"style"`
-	Username    string `json:"username"`
+	Type string    `json:"type"`
+	Body ChangeMap `json:"body"`
 }
 
 type EventCondition map[string]string
@@ -372,4 +265,112 @@ const (
 	// Special
 
 	EventTypeWhisper EventType = "whisper.self"
+)
+
+type ChangeMap struct {
+	// The object's ID
+	ID string `json:"id"`
+	// The type of the object
+	Kind ObjectKind `json:"kind"`
+	// Contextual is whether or not this event is only relating
+	// to the specific source conditions and not indicative of a
+	// genuine creation, deletion, or update to the object
+	Contextual bool `json:"contextual,omitempty"`
+	// The user who made changes to the object
+	Actor UserPartialModel `json:"actor,omitempty"`
+	// A list of added fields
+	Added []ChangeField `json:"added,omitempty"`
+	// A list of updated fields
+	Updated []ChangeField `json:"updated,omitempty"`
+	// A list of removed fields
+	Removed []ChangeField `json:"removed,omitempty"`
+	// A list of items pushed to an array
+	Pushed []ChangeField `json:"pushed,omitempty"`
+	// A list of items pulled from an array
+	Pulled []ChangeField `json:"pulled,omitempty"`
+	// A full object. Only available during a "create" event
+	Object json.RawMessage `json:"object,omitempty"`
+}
+
+type ChangeField struct {
+	Key      string          `json:"key"`
+	Index    *int32          `json:"index"`
+	Nested   bool            `json:"nested,omitempty"`
+	Type     ChangeFieldType `json:"type"`
+	OldValue any             `json:"old_value,omitempty"`
+	Value    any             `json:"value"`
+}
+
+type ChangeFieldType string
+
+const (
+	ChangeFieldTypeString ChangeFieldType = "string"
+	ChangeFieldTypeNumber ChangeFieldType = "number"
+	ChangeFieldTypeBool   ChangeFieldType = "bool"
+	ChangeFieldTypeObject ChangeFieldType = "object"
+)
+
+type UserPartialModel struct {
+	ID          string                       `json:"id"`
+	UserType    UserTypeModel                `json:"type,omitempty" enums:",BOT,SYSTEM"`
+	Username    string                       `json:"username"`
+	DisplayName string                       `json:"display_name"`
+	AvatarURL   string                       `json:"avatar_url,omitempty" extensions:"x-omitempty"`
+	Style       UserStyle                    `json:"style"`
+	RoleIDs     []string                     `json:"roles,omitempty" extensions:"x-omitempty"`
+	Connections []UserConnectionPartialModel `json:"connections,omitempty" extensions:"x-omitempty"`
+}
+
+type UserStyle struct {
+	Color   int32   `json:"color,omitempty" extensions:"x-omitempty"`
+	PaintID *string `json:"paint_id,omitempty" extensions:"x-omitempty"`
+}
+
+type UserConnectionPartialModel struct {
+	ID string `json:"id"`
+	// The service of the connection.
+	Platform UserConnectionPlatformModel `json:"platform" enums:"TWITCH,YOUTUBE,DISCORD"`
+	// The username of the user on the platform.
+	Username string `json:"username"`
+	// The display name of the user on the platform.
+	DisplayName string `json:"display_name"`
+	// The time when the user linked this connection
+	LinkedAt int64 `json:"linked_at"`
+	// The maximum size of emote sets that may be bound to this connection.
+	EmoteCapacity int32 `json:"emote_capacity"`
+	// The emote set that is linked to this connection
+	EmoteSetID *string `json:"emote_set_id" extensions:"x-nullable"`
+}
+
+type UserConnectionPlatformModel string
+
+var (
+	UserConnectionPlatformTwitch  UserConnectionPlatformModel = "TWITCH"
+	UserConnectionPlatformYouTube UserConnectionPlatformModel = "YOUTUBE"
+	UserConnectionPlatformDiscord UserConnectionPlatformModel = "DISCORD"
+)
+
+type UserTypeModel string
+
+var (
+	UserTypeRegular UserTypeModel = ""
+	UserTypeBot     UserTypeModel = "BOT"
+	UserTypeSystem  UserTypeModel = "SYSTEM"
+)
+
+type ObjectID = string
+
+type ObjectKind int8
+
+const (
+	ObjectKindUser        ObjectKind = 1
+	ObjectKindEmote       ObjectKind = 2
+	ObjectKindEmoteSet    ObjectKind = 3
+	ObjectKindRole        ObjectKind = 4
+	ObjectKindEntitlement ObjectKind = 5
+	ObjectKindBan         ObjectKind = 6
+	ObjectKindMessage     ObjectKind = 7
+	ObjectKindReport      ObjectKind = 8
+	ObjectKindPresence    ObjectKind = 9
+	ObjectKindCosmetic    ObjectKind = 10
 )

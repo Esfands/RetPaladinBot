@@ -495,25 +495,86 @@ func (em *EmoteModule) handleUnsubscribePayload(payload UnsubscribePayload) {
 	fmt.Println("Received Unsubscribe payload:", payload)
 }
 
-func (em *EmoteModule) handleDispatchPayload(payload Event) {
-	// Handle dispatch payload
+func findEmoteIndex(emotes []string, emote string) int {
+	for i, e := range emotes {
+		if e == emote {
+			return i
+		}
+	}
+	return -1
+}
 
+func (em *EmoteModule) handleDispatchPayload(payload Event) {
 	body := payload.Body
 
-	// Emote was added
-	if len(payload.Body.Pushed) > 0 {
-		fmt.Println("Received Dispatch payload pushed:", payload.Body.Pushed[0].Value.Name)
-		return
-	}
+	// Handle emote_set.update event
+	if payload.Type == string(EventTypeUpdateEmoteSet) {
+		// Emote was added
+		if len(body.Pushed) > 0 {
+			for _, change := range body.Pushed {
+				if change.Key == "emotes" {
+					if emote, ok := change.Value.(map[string]interface{}); ok {
+						if name, exists := emote["name"].(string); exists {
+							fmt.Println("Emote added:", name)
+							em.SevenTVChannelEmotes = append(em.SevenTVChannelEmotes, name)
+							fmt.Println(em.SevenTVChannelEmotes)
+						}
+					}
+				}
+			}
+		}
 
-	// Emote was removed
-	if (body.Removed != nil && len(body.Removed) > 0) ||
-		(body.Pulled != nil && len(body.Pulled) > 0) ||
-		(body.Updated != nil && len(body.Updated) > 0) {
-
-		fmt.Println("Received Dispatch payload removed:", payload.Body.Removed[0].OldValue.Name)
-		fmt.Println("Received Dispatch payload updated:", payload.Body.Updated[0].OldValue.Name)
-		fmt.Println("Received Dispatch payload pulled:", payload.Body.Pulled[0].OldValue.Name)
+		// Emote was removed
+		if len(body.Pulled) > 0 || len(body.Removed) > 0 || len(body.Updated) > 0 {
+			if len(body.Pulled) > 0 {
+				for _, change := range body.Pulled {
+					if change.Key == "emotes" {
+						if emote, ok := change.OldValue.(map[string]interface{}); ok {
+							if name, exists := emote["name"].(string); exists {
+								fmt.Println("Emote removed:", name)
+								// Remove the emote from SevenTVChannelEmotes
+								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
+								if index != -1 {
+									em.SevenTVChannelEmotes = append(em.SevenTVChannelEmotes[:index], em.SevenTVChannelEmotes[index+1:]...)
+								}
+							}
+						}
+					}
+				}
+			}
+			if len(body.Removed) > 0 {
+				for _, change := range body.Removed {
+					if change.Key == "emotes" {
+						if emote, ok := change.OldValue.(map[string]interface{}); ok {
+							if name, exists := emote["name"].(string); exists {
+								fmt.Println("Emote removed:", name)
+								// Remove the emote from SevenTVChannelEmotes
+								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
+								if index != -1 {
+									em.SevenTVChannelEmotes = append(em.SevenTVChannelEmotes[:index], em.SevenTVChannelEmotes[index+1:]...)
+								}
+							}
+						}
+					}
+				}
+			}
+			if len(body.Updated) > 0 {
+				for _, change := range body.Updated {
+					if change.Key == "emotes" {
+						if emote, ok := change.OldValue.(map[string]interface{}); ok {
+							if name, exists := emote["name"].(string); exists {
+								fmt.Println("Emote removed:", name)
+								// Remove the emote from SevenTVChannelEmotes
+								index := findEmoteIndex(em.SevenTVChannelEmotes, name)
+								if index != -1 {
+									em.SevenTVChannelEmotes = append(em.SevenTVChannelEmotes[:index], em.SevenTVChannelEmotes[index+1:]...)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
