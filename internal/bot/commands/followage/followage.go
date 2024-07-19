@@ -95,6 +95,10 @@ func (c *FollowageCommand) Code(user twitch.User, context []string) (string, err
 		return "", err
 	}
 
+	if res.Error != "" {
+		return fmt.Sprintf("@%v, there was an error with Twitch's API... Susage", user.Name), nil
+	}
+
 	if len(res.Data.Follows) == 0 {
 		if target == user.Name {
 			return fmt.Sprintf("%v, you are not following the channel", user.Name), nil
