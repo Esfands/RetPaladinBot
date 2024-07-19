@@ -7,7 +7,7 @@ app = "retpaladinbot"
 primary_region = "dfw"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 3000
   protocol = "tcp"
   auto_stop_machines = true
   auto_start_machines = true
