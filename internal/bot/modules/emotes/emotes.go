@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/dghubble/sling"
@@ -26,6 +27,9 @@ type EmoteModule struct {
 	SevenTVChannelEmotes []string
 
 	wsConn *websocket.Conn
+	wsMu   sync.Mutex
+	cancel context.CancelFunc
+	wsCtx  context.Context
 }
 
 // NewEmoteModule creates a new EmoteModule and initializes the global and channel emotes.
@@ -42,8 +46,6 @@ func NewEmoteModule(gctx global.Context, channelID string) (*EmoteModule, error)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(em.GetAllEmotes())
 
 	// Initialize WebSocket client
 	err = em.initializeWebSocketClient(gctx)
@@ -272,10 +274,10 @@ func (em *EmoteModule) getSevenTVChannelEmotes(channelID string) error {
 
 // initializeWebSocketClient initializes the WebSocket client and handles incoming messages.
 func (em *EmoteModule) initializeWebSocketClient(gctx global.Context) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	wsConn, _, err := websocket.Dial(ctx, "wss://events.7tv.io/v3", nil)
+	em.wsCtx, em.cancel = context.WithCancel(context.Background())
+	wsConn, _, err := websocket.Dial(em.wsCtx, "wss://events.7tv.io/v3", nil)
 	if err != nil {
-		cancel()
+		em.cancel()
 		return fmt.Errorf("failed to connect to WebSocket: %w", err)
 	}
 	em.wsConn = wsConn
@@ -293,21 +295,21 @@ func (em *EmoteModule) initializeWebSocketClient(gctx global.Context) error {
 
 	bytes, err := json.Marshal(subscriptionPayload)
 	if err != nil {
-		cancel()
+		em.cancel()
 		return fmt.Errorf("failed to marshal subscription payload: %w", err)
 	}
 
-	em.wsConn.Write(ctx, websocket.MessageText, bytes)
+	em.wsConn.Write(em.wsCtx, websocket.MessageText, bytes)
 
 	// Close the WebSocket connection when gctx is done
 	go func() {
 		<-gctx.Done()
-		cancel()
+		em.cancel()
 		em.wsConn.Close(websocket.StatusNormalClosure, "context done")
 	}()
 
 	// Handle incoming messages
-	go em.handleWebSocketMessages(ctx)
+	go em.handleWebSocketMessages(em.wsCtx)
 	return nil
 }
 
@@ -448,6 +450,9 @@ func (em *EmoteModule) handleHeartbeatPayload(payload HeartbeatPayload) {
 }
 
 func (em *EmoteModule) reconnect(ctx context.Context) error {
+	em.wsMu.Lock()
+	defer em.wsMu.Unlock()
+
 	// Close the current WebSocket connection
 	if err := em.wsConn.Close(websocket.StatusNormalClosure, "reconnecting"); err != nil {
 		fmt.Println("Error closing WebSocket connection:", err)
@@ -470,11 +475,11 @@ func (em *EmoteModule) handleReconnectPayload(ctx context.Context, payload Recon
 	fmt.Println("Received Reconnect payload:", payload)
 
 	// Cancel the current context and create a new one
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	em.cancel()
+	em.wsCtx, em.cancel = context.WithTimeout(context.Background(), 5*time.Second)
 
 	// Reconnect to the WebSocket
-	if err := em.reconnect(ctx); err != nil {
+	if err := em.reconnect(em.wsCtx); err != nil {
 		fmt.Println("Error reconnecting to WebSocket:", err)
 	}
 }
