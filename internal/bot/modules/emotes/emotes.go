@@ -324,12 +324,12 @@ func (em *EmoteModule) handleWebSocketMessages(ctx context.Context) {
 			slog.Error("error reading from WebSocket", "error", err.Error())
 			return
 		}
-		em.processWebSocketMessage(ctx, message)
+		em.processWebSocketMessage(message)
 	}
 }
 
 // processWebSocketMessage processes a single WebSocket message.
-func (em *EmoteModule) processWebSocketMessage(ctx context.Context, message []byte) {
+func (em *EmoteModule) processWebSocketMessage(message []byte) {
 	var commonMsg Message[json.RawMessage]
 	if err := json.Unmarshal(message, &commonMsg); err != nil {
 		fmt.Println("Error unmarshaling common message:", err)
@@ -364,7 +364,7 @@ func (em *EmoteModule) processWebSocketMessage(ctx context.Context, message []by
 			fmt.Println("Error unmarshaling reconnect payload:", err)
 			return
 		}
-		em.handleReconnectPayload(ctx, payload)
+		em.handleReconnectPayload(payload)
 	case OpcodeResume:
 		var payload ResumePayload
 		if err := json.Unmarshal(commonMsg.Data, &payload); err != nil {
@@ -465,13 +465,32 @@ func (em *EmoteModule) reconnect(ctx context.Context) error {
 	}
 	em.wsConn = wsConn
 
+	// Resubscribe to events
+	subscriptionPayload := Message[SubscribePayload]{
+		Op:        OpcodeSubscribe,
+		Timestamp: time.Now().Unix(),
+		Data: SubscribePayload{
+			Type: EventTypeAnyEmoteSet,
+			Condition: map[string]string{
+				"object_id": "613793270dac665160c56d8f",
+			},
+		},
+	}
+
+	bytes, err := json.Marshal(subscriptionPayload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal subscription payload: %w", err)
+	}
+
+	em.wsConn.Write(ctx, websocket.MessageText, bytes)
+
 	// Handle incoming messages with the new connection
 	go em.handleWebSocketMessages(ctx)
 
 	return nil
 }
 
-func (em *EmoteModule) handleReconnectPayload(ctx context.Context, payload ReconnectPayload) {
+func (em *EmoteModule) handleReconnectPayload(payload ReconnectPayload) {
 	fmt.Println("Received Reconnect payload:", payload)
 
 	// Cancel the current context and create a new one
