@@ -1,6 +1,8 @@
 package db
 
-import "context"
+import (
+	"context"
+)
 
 type CustomCommand struct {
 	Name       string
@@ -203,4 +205,23 @@ func (q *Queries) GetAllDefaultCommands(ctx context.Context) ([]DefaultCommand, 
 		commands = append(commands, command)
 	}
 	return commands, rows.Err()
+}
+
+func (q *Queries) GetDefaultCommandByName(ctx context.Context, name string) (*DefaultCommand, error) {
+	var cmd DefaultCommand
+	err := q.db.QueryRowContext(ctx, "SELECT name, aliases, permissions, description, dynamic_description, global_cooldown, user_cooldown, enabled_offline, enabled_online, usage_count FROM commands WHERE name = ?", name).Scan(
+		&cmd.Name, &cmd.Aliases, &cmd.Permissions, &cmd.Description, &cmd.DynamicDescription, &cmd.GlobalCooldown, &cmd.UserCooldown, &cmd.EnabledOffline, &cmd.EnabledOnline, &cmd.UsageCount)
+	if err != nil {
+		return nil, err
+	}
+	return &cmd, nil
+}
+
+func (q *Queries) GetCustomCommandByName(ctx context.Context, name string) (*CustomCommand, error) {
+	var cmd CustomCommand
+	err := q.db.QueryRowContext(ctx, "SELECT name, response, usage_count FROM custom_commands WHERE name = ?", name).Scan(&cmd.Name, &cmd.Response, &cmd.UsageCount)
+	if err != nil {
+		return nil, err
+	}
+	return &cmd, nil
 }
