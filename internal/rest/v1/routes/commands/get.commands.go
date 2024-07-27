@@ -62,3 +62,55 @@ func (rg *RouteGroup) GetCommands(ctx *respond.Ctx) error {
 		CustomCommands:  customCommands,
 	})
 }
+
+type GetCommandResponse struct {
+	DefaultCommand *domain.Command       `json:"default_command,omitempty"`
+	CustomCommand  *domain.CustomCommand `json:"custom_command,omitempty"`
+}
+
+func (rg *RouteGroup) GetCommandByName(ctx *respond.Ctx) error {
+	name := ctx.Params("name")
+
+	// Query the default commands
+	storedDefaultCommand, err := rg.gctx.Crate().Turso.Queries().GetDefaultCommandByName(ctx.Context(), name)
+	if err == nil && storedDefaultCommand != nil {
+		convertedAliases, err := utils.ConvertJSONStringToSlice(storedDefaultCommand.Aliases)
+		if err != nil {
+			return errors.ErrInternalServerError().SetDetail(err.Error())
+		}
+
+		convertedDynamicDescription, err := utils.ConvertJSONStringToSlice(storedDefaultCommand.DynamicDescription)
+		if err != nil {
+			return errors.ErrInternalServerError().SetDetail(err.Error())
+		}
+
+		command := domain.Command{
+			Name:               storedDefaultCommand.Name,
+			Aliases:            convertedAliases,
+			Description:        storedDefaultCommand.Description,
+			DynamicDescription: convertedDynamicDescription,
+			GlobalCooldown:     storedDefaultCommand.GlobalCooldown,
+			UserCooldown:       storedDefaultCommand.UserCooldown,
+			EnabledOffline:     storedDefaultCommand.EnabledOffline == 1,
+			EnabledOnline:      storedDefaultCommand.EnabledOnline == 1,
+			UsageCount:         storedDefaultCommand.UsageCount,
+		}
+
+		return ctx.JSON(GetCommandResponse{DefaultCommand: &command, CustomCommand: nil})
+	}
+
+	// Query the custom commands
+	storedCustomCommand, err := rg.gctx.Crate().Turso.Queries().GetCustomCommandByName(ctx.Context(), name)
+	if err == nil && storedCustomCommand != nil {
+		command := domain.CustomCommand{
+			Name:       storedCustomCommand.Name,
+			Response:   storedCustomCommand.Response,
+			UsageCount: storedCustomCommand.UsageCount,
+		}
+
+		return ctx.JSON(GetCommandResponse{DefaultCommand: nil, CustomCommand: &command})
+	}
+
+	// If no command was found
+	return errors.ErrNotFound().SetDetail("Command not found")
+}

@@ -78,7 +78,7 @@ func New(gctx global.Context) error {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: "http://localhost:3001",
 		AllowMethods: "GET,POST,PUT,PATCH,DELETE",
 		AllowHeaders: strings.Join(allowedHeaders, ", "),
 	}))

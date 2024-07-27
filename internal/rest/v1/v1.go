@@ -21,4 +21,5 @@ func New(gctx global.Context, router fiber.Router) {
 
 	commandRotues := commands.NewRouteGroup(gctx)
 	router.Get("/commands", ctx(commandRotues.GetCommands))
+	router.Get("/commands/:name", ctx(commandRotues.GetCommandByName))
 }
