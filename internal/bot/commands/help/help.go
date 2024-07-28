@@ -2,10 +2,10 @@ package help
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
-	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
@@ -67,7 +67,10 @@ func (c *HelpCommand) GlobalCooldown() int {
 }
 
 func (c *HelpCommand) Code(user twitch.User, context []string) (string, error) {
-	target := utils.GetTarget(user, context)
+	if len(context) >= 1 {
+		url := fmt.Sprintf("https://www.retpaladinbot.com/commands/%v", context[0])
+		return fmt.Sprintf(`@%v help for the command "%v": %v`, user.Name, strings.ToLower(context[0]), url), nil
+	}
 
-	return fmt.Sprintf("@%v, RetPaladinBot was created for EsfandTV and developed by Mahcksimus. Current version: %v", target, c.version), nil
+	return fmt.Sprintf("@%v, created for EsfandTV and developed by Mahcksimus. Current version: %v, commands: https://www.retpaladinbot.com/", user.Name, c.version), nil
 }
