@@ -7,6 +7,14 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/utils"
 )
 
+func convertToPermissions(strings []string) []domain.Permission {
+	var permissions []domain.Permission
+	for _, str := range strings {
+		permissions = append(permissions, domain.Permission(str))
+	}
+	return permissions
+}
+
 type GetCommandsResponse struct {
 	DefaultCommands []domain.Command       `json:"default_commands"`
 	CustomCommands  []domain.CustomCommand `json:"custom_commands"`
@@ -30,6 +38,12 @@ func (rg *RouteGroup) GetCommands(ctx *respond.Ctx) error {
 			return errors.ErrInternalServerError().SetDetail(err.Error())
 		}
 
+		// Retrieve permissions
+		convertedPermissions, err := utils.ConvertJSONStringToSlice(storedDefaultCommand.Permissions)
+		if err != nil {
+			return errors.ErrInternalServerError().SetDetail(err.Error())
+		}
+
 		defaultCommands = append(defaultCommands, domain.Command{
 			Name:               storedDefaultCommand.Name,
 			Aliases:            convertedAliases,
@@ -40,6 +54,7 @@ func (rg *RouteGroup) GetCommands(ctx *respond.Ctx) error {
 			EnabledOffline:     storedDefaultCommand.EnabledOffline == 1,
 			EnabledOnline:      storedDefaultCommand.EnabledOnline == 1,
 			UsageCount:         storedDefaultCommand.UsageCount,
+			Permissions:        convertToPermissions(convertedPermissions),
 		})
 	}
 
