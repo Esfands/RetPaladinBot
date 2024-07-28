@@ -14,7 +14,7 @@ var (
 )
 
 func CooldownCanContinue(user twitch.User, cmdName string, cmdCooldown, globalCDTime int) bool {
-	/* if isUserPermitted(user, []string{"broadcaster", "moderator"}) {
+	/* if utils.(user, []string{"broadcaster", "moderator"}) {
 		return true
 	} */
 

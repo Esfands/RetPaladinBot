@@ -78,7 +78,7 @@ func isCommandMatch(input string, command domain.DefaultCommand) bool {
 func executeCommand(gctx global.Context, user twitch.User, context []string, command domain.DefaultCommand) (string, error) {
 	// Allow execution if the command has no required permissions
 	if len(command.Permissions()) > 0 && !isUserPermitted(user, command.Permissions()) {
-		return fmt.Sprintf("@%v, you don't have permission to use this command.", user.Name), nil
+		return "", nil
 	}
 
 	response, err := command.Code(user, context[1:])
