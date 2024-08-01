@@ -5,6 +5,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/rest/v1/respond"
 	"github.com/esfands/retpaladinbot/internal/rest/v1/routes"
 	"github.com/esfands/retpaladinbot/internal/rest/v1/routes/commands"
+	"github.com/esfands/retpaladinbot/internal/rest/v1/routes/twitch"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,4 +23,7 @@ func New(gctx global.Context, router fiber.Router) {
 	commandRotues := commands.NewRouteGroup(gctx)
 	router.Get("/commands", ctx(commandRotues.GetCommands))
 	router.Get("/commands/:name", ctx(commandRotues.GetCommandByName))
+
+	twitchRoutes := twitch.NewRouteGroup(gctx)
+	router.Post("/twitch/eventsub", ctx(twitchRoutes.EventSubRecievedNotification))
 }

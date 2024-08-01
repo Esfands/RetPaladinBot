@@ -35,6 +35,7 @@ var (
 	// Server errors
 	ErrInternalServerError apiErrorFunc = DefineError(10500, "Internal Server Error", fasthttp.StatusInternalServerError)
 	ErrNotFound            apiErrorFunc = DefineError(10501, "Not Found", fasthttp.StatusNotFound)
+	ErrInvalidSignature    apiErrorFunc = DefineError(10502, "Invalid Signature", fasthttp.StatusForbidden)
 )
 
 type apiError struct {

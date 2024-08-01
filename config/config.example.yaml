@@ -8,6 +8,7 @@ twitch:
   helix:
     client_id:
     client_secret:
+    eventsub_secret:
 
 turso:
   url: 

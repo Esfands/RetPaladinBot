@@ -23,8 +23,9 @@ type Config struct {
 		} `mapstructure:"bot" json:"bot"`
 
 		Helix struct {
-			ClientID     string `mapstructure:"client_id" json:"client_id"`
-			ClientSecret string `mapstructure:"client_secret" json:"client_secret"`
+			ClientID       string `mapstructure:"client_id" json:"client_id"`
+			ClientSecret   string `mapstructure:"client_secret" json:"client_secret"`
+			EventSubSecret string `mapstructure:"eventsub_secret" json:"eventsub_secret"`
 		} `mapstructure:"helix" json:"helix"`
 	} `mapstructure:"twitch" json:"twitch"`
 
