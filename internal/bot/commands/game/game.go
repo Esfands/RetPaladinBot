@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
-	"github.com/nicklaw5/helix/v2"
 )
 
 type GameCommand struct {
@@ -67,21 +67,18 @@ func (c *GameCommand) GlobalCooldown() int {
 func (c *GameCommand) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
-	res, err := c.gctx.Crate().Helix.Client().GetChannelInformation(&helix.GetChannelInformationParams{
-		BroadcasterIDs: []string{c.gctx.Config().Twitch.Bot.ChannelID},
-	})
+	stream, err := c.gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(c.gctx)
 	if err != nil {
-		return "", err
+		return "", errors.New("error getting the stream status")
 	}
 
-	// Check if the response responded with an unauthorized error or some other error
-	if res.Error != "" {
-		return fmt.Sprintf("@%v, sorry, the Twitch API threw an error... Susge", user.Name), nil
+	if stream.GameName.String == "" || !stream.GameID.Valid {
+		return fmt.Sprintf("@%v, Esfand isn't under a specific category", target), nil
 	}
 
-	if strings.ToLower(res.Data.Channels[0].GameName) == "just chatting" {
-		return fmt.Sprintf("@%v, Esfand is under the category: %v", target, res.Data.Channels[0].Title), nil
+	if strings.ToLower(stream.GameName.String) == "just chatting" {
+		return fmt.Sprintf("@%v, Esfand is under the category: %v", target, stream.GameName.String), nil
 	}
 
-	return fmt.Sprintf("@%v, Esfand is playing %v", target, res.Data.Channels[0].GameName), nil
+	return fmt.Sprintf("@%v, Esfand is playing %v", target, stream.GameName.String), nil
 }
