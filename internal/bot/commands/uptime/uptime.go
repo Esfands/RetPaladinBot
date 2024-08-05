@@ -1,6 +1,7 @@
 package uptime
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
-	"github.com/nicklaw5/helix/v2"
+	"golang.org/x/exp/slog"
 )
 
 type UptimeCommand struct {
@@ -65,21 +66,31 @@ func (c *UptimeCommand) GlobalCooldown() int {
 func (c *UptimeCommand) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
-	res, err := c.gctx.Crate().Helix.Client().GetStreams(&helix.StreamsParams{
-		UserIDs: []string{c.gctx.Config().Twitch.Bot.ChannelID},
-	})
+	stream, err := c.gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(c.gctx)
 	if err != nil {
+		slog.Error("[uptime-cmd] error getting most recent stream status", "error", err.Error())
 		return "", err
 	}
 
-	// Check if the response responded with an unauthorized error or some other error
-	if res.Error != "" {
-		return fmt.Sprintf("@%v, sorry, the Twitch API threw an error... Susge", user.Name), nil
-	}
+	// Get the uptime since there's no end time
+	if !stream.EndedAt.Valid {
+		// Parse the start time
+		parsedStartTime, err := time.Parse(time.RFC3339, stream.StartedAt)
+		if err != nil {
+			slog.Error("[uptime-cmd] error parsing stream start time", "error", err.Error())
+			return "", errors.New("error parsing the stream start time")
+		}
 
-	if len(res.Data.Streams) == 0 {
-		return fmt.Sprintf("@%v, the stream is offline Sadge", target), nil
-	}
+		uptime := utils.TimeDifference(parsedStartTime, time.Now(), true)
+		return fmt.Sprintf("@%v, the stream has been live for %v", target, uptime), nil
+	} else {
+		parsedEndTime, err := time.Parse(time.RFC3339, stream.EndedAt.String)
+		if err != nil {
+			slog.Error("[uptime-cmd] error parsing stream end time", "error", err.Error())
+			return "", errors.New("error parsing the stream end time")
+		}
 
-	return fmt.Sprintf("@%v, the stream has been live for %v", target, utils.TimeDifference(res.Data.Streams[0].StartedAt, time.Now(), true)), nil
+		downtime := utils.TimeDifference(parsedEndTime, time.Now(), true)
+		return fmt.Sprintf("@%v, the stream has been offline for %v", target, downtime), nil
+	}
 }
