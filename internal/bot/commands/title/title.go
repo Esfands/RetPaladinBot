@@ -1,13 +1,13 @@
 package title
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
-	"github.com/nicklaw5/helix/v2"
 )
 
 type TitleCommand struct {
@@ -64,17 +64,14 @@ func (c *TitleCommand) GlobalCooldown() int {
 func (c *TitleCommand) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
-	res, err := c.gctx.Crate().Helix.Client().GetChannelInformation(&helix.GetChannelInformationParams{
-		BroadcasterIDs: []string{c.gctx.Config().Twitch.Bot.ChannelID},
-	})
+	stream, err := c.gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(c.gctx)
 	if err != nil {
-		return "", err
+		return "", errors.New("error getting the stream status")
 	}
 
-	// Check if the response responded with an unauthorized error or some other error
-	if res.Error != "" {
-		return fmt.Sprintf("@%v, sorry, the Twitch API threw an error... Susge", user.Name), nil
+	if stream.Title.String == "" || !stream.Title.Valid {
+		return fmt.Sprintf("@%v the title is not set to anything", target), nil
 	}
 
-	return fmt.Sprintf("@%v current title: %v", target, res.Data.Channels[0].Title), nil
+	return fmt.Sprintf("@%v current title: %v", target, stream.Title.String), nil
 }
