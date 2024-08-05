@@ -2,12 +2,12 @@ package goliverightnow
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/gempir/go-twitch-irc/v4"
 	"github.com/go-co-op/gocron"
-	"github.com/nicklaw5/helix/v2"
 )
 
 type GoLiveRightNowModule struct {
@@ -28,16 +28,14 @@ func NewGoLiveRightNowModule(gctx global.Context, client *twitch.Client) *GoLive
 
 	// Define the job
 	job := func() {
-		channelInfo, err := gctx.Crate().Helix.Client().GetStreams(&helix.StreamsParams{
-			UserIDs: []string{gctx.Config().Twitch.Bot.ChannelID},
-		})
+		streamStatus, err := gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(gctx)
 		if err != nil {
-			fmt.Println("Error getting channel information in go live right now module:", err)
+			slog.Error("[go-live-right-now] Error getting most recent stream status", "error", err)
 			return
 		}
 
 		// Say GOLIVERIGHTNOWMADGE if the stream isn't live
-		if len(channelInfo.Data.Streams) == 0 {
+		if !streamStatus.Live {
 			client.Say(gctx.Config().Twitch.Bot.Channel, "GOLIVERIGHTNOWMADGE")
 		}
 	}
