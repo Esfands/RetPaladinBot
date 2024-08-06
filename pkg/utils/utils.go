@@ -42,14 +42,7 @@ func B2S(b []byte) string {
 // Note it may break if string and/or slice header will change
 // in the future go versions.
 func S2B(s string) (b []byte) {
-	/* #nosec G103 */
-	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-	/* #nosec G103 */
-	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	bh.Data = sh.Data
-	bh.Len = sh.Len
-	bh.Cap = sh.Len
-	return b
+	return unsafe.Slice(unsafe.StringData(s), len(s))
 }
 
 // IsEmptyValue uses reflection to determine if a value is empty.

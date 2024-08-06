@@ -2,6 +2,7 @@ package accountage
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/esfands/retpaladinbot/internal/global"
@@ -9,7 +10,6 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
 	"github.com/nicklaw5/helix/v2"
-	"golang.org/x/exp/slog"
 )
 
 type AccountAgeCommand struct {

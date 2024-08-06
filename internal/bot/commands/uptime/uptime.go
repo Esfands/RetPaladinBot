@@ -3,13 +3,13 @@ package uptime
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
-	"golang.org/x/exp/slog"
 )
 
 type UptimeCommand struct {

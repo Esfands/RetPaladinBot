@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"sync"
@@ -16,7 +17,6 @@ import (
 	"github.com/esfands/retpaladinbot/internal/services/helix"
 	"github.com/esfands/retpaladinbot/internal/services/scheduler"
 	"github.com/esfands/retpaladinbot/internal/services/turso"
-	"golang.org/x/exp/slog"
 )
 
 var (

@@ -2,12 +2,12 @@ package goliverightnow
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/gempir/go-twitch-irc/v4"
 	"github.com/go-co-op/gocron"
-	"golang.org/x/exp/slog"
 )
 
 type GoLiveRightNowModule struct {

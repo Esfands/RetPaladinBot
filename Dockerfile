@@ -1,5 +1,5 @@
 # Go image tag
-ARG GOLANG_TAG=1.20-bullseye
+ARG GOLANG_TAG=1.22-bullseye
 
 FROM golang:$GOLANG_TAG as builder
 
