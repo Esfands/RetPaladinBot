@@ -90,7 +90,7 @@ func (c *UptimeCommand) Code(user twitch.User, context []string) (string, error)
 			return "", errors.New("error parsing the stream end time")
 		}
 
-		downtime := utils.TimeDifference(parsedEndTime, time.Now(), true)
+		downtime := utils.TimeDifference(time.Now(), parsedEndTime, true)
 		return fmt.Sprintf("@%v, the stream has been offline for %v", target, downtime), nil
 	}
 }
