@@ -1,6 +1,6 @@
 module github.com/esfands/retpaladinbot
 
-go 1.20
+go 1.22.0
 
 require (
 	github.com/dghubble/sling v1.4.2
