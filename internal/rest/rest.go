@@ -3,6 +3,7 @@ package rest
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	fiber "github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"golang.org/x/exp/slog"
 )
 
 var allowedHeaders = []string{

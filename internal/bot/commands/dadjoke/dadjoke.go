@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/dghubble/sling"
@@ -11,7 +12,6 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/gempir/go-twitch-irc/v4"
-	"golang.org/x/exp/slog"
 )
 
 type DadJokeCommand struct {

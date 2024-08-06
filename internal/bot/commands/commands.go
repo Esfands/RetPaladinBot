@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"github.com/esfands/retpaladinbot/internal/bot/commands/accountage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/command"
@@ -19,7 +20,6 @@ import (
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/pkg/domain"
 	"github.com/esfands/retpaladinbot/pkg/utils"
-	"golang.org/x/exp/slog"
 )
 
 type CommandManager struct {

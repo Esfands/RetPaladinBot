@@ -3,10 +3,10 @@ package helix
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/esfands/retpaladinbot/internal/services/scheduler"
 	"github.com/nicklaw5/helix/v2"
-	"golang.org/x/exp/slog"
 )
 
 type SetupOptions struct {

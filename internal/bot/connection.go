@@ -1,13 +1,14 @@
 package bot
 
 import (
+	"log/slog"
+
 	"github.com/esfands/retpaladinbot/config"
 	"github.com/esfands/retpaladinbot/internal/bot/commands"
 	"github.com/esfands/retpaladinbot/internal/bot/modules"
 	"github.com/esfands/retpaladinbot/internal/bot/variables"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/gempir/go-twitch-irc/v4"
-	"golang.org/x/exp/slog"
 )
 
 type Connection struct {

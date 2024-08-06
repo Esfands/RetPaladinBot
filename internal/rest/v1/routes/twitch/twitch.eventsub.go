@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -16,7 +17,6 @@ import (
 	"github.com/esfands/retpaladinbot/pkg/errors"
 	"github.com/esfands/retpaladinbot/pkg/utils"
 	"github.com/nicklaw5/helix/v2"
-	"golang.org/x/exp/slog"
 )
 
 func (rg *RouteGroup) EventSubRecievedNotification(ctx *respond.Ctx) error {
