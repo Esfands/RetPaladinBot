@@ -84,13 +84,13 @@ func (c *UptimeCommand) Code(user twitch.User, context []string) (string, error)
 		uptime := utils.TimeDifference(parsedStartTime, time.Now(), true)
 		return fmt.Sprintf("@%v, the stream has been live for %v", target, uptime), nil
 	} else {
-		parsedEndTime, err := time.Parse(time.RFC3339, stream.EndedAt.String)
+		parsedEndTime, err := time.Parse(time.RFC3339, "2024-08-05T21:59:23Z")
 		if err != nil {
 			slog.Error("[uptime-cmd] error parsing stream end time", "error", err.Error())
 			return "", errors.New("error parsing the stream end time")
 		}
 
-		downtime := utils.TimeDifference(parsedEndTime, time.Now(), true)
+		downtime := utils.TimeDifference(time.Now(), parsedEndTime, true)
 		return fmt.Sprintf("@%v, the stream has been offline for %v", target, downtime), nil
 	}
 }
