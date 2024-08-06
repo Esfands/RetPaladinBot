@@ -7,6 +7,13 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
+type BadgeMap map[string]int
+
+func hasBadge(badges BadgeMap, badgeName string) bool {
+	_, exists := badges[badgeName]
+	return exists
+}
+
 var (
 	cooldowns  = make(map[string]map[string]int64)
 	globalCD   = make(map[string]int64)
@@ -14,9 +21,9 @@ var (
 )
 
 func CooldownCanContinue(user twitch.User, cmdName string, cmdCooldown, globalCDTime int) bool {
-	/* if utils.(user, []string{"broadcaster", "moderator"}) {
+	if hasBadge(user.Badges, "broadcaster") || hasBadge(user.Badges, "moderator") {
 		return true
-	} */
+	}
 
 	if !globalCooldown(cmdName, globalCDTime) {
 		return false
