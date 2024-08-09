@@ -37,7 +37,7 @@ func (c *GDQCommand) Permissions() []domain.Permission {
 }
 
 func (c *GDQCommand) Description() string {
-	return "Get the current category of the stream."
+	return "Get a random stream donation from any GDQ event."
 }
 
 func (c *GDQCommand) DynamicDescription() []string {
