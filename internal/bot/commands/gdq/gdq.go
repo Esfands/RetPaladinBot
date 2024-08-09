@@ -54,7 +54,7 @@ func (c *GDQCommand) DynamicDescription() []string {
 
 func (c *GDQCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
-		EnabledOnline:  true,
+		EnabledOnline:  false,
 		EnabledOffline: true,
 	}
 }
