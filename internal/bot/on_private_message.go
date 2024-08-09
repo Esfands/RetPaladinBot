@@ -109,6 +109,19 @@ func handleCommand(gctx global.Context, variables variables.ServiceI, commandMan
 
 	for _, dc := range commandManager.DefaultCommands {
 		if isCommandMatch(strings.ToLower(context[0]), dc) {
+			// Check to see if the command is enabled offline, if it is and the command can't be ran when live, return.
+			if dc.Conditions().EnabledOffline {
+				streamStatus, err := gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(gctx)
+				if err != nil {
+					slog.Error("Failed to get most recent stream status", "error", err.Error())
+					return "", err
+				}
+
+				if streamStatus.Live {
+					return "", nil
+				}
+			}
+
 			return executeCommand(gctx, user, context, dc)
 		}
 	}
