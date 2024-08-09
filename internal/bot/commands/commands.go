@@ -9,6 +9,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/command"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/dadjoke"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/game"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/gdq"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/help"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/ping"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/song"
@@ -61,6 +62,7 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		dadjoke.NewDadJokeCommand(cm.gctx),
 		help.NewHelpCommand(cm.gctx, cm.version),
 		command.NewCommandCommand(cm.gctx, cm),
+		gdq.NewGDQCommand(cm.gctx),
 	}
 }
 
