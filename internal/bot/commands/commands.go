@@ -13,6 +13,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/help"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/ping"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/song"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/subage"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/time"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/title"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/uptime"
@@ -63,6 +64,7 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		help.NewHelpCommand(cm.gctx, cm.version),
 		command.NewCommandCommand(cm.gctx, cm),
 		gdq.NewGDQCommand(cm.gctx),
+		subage.NewSubageCommand(cm.gctx),
 	}
 }
 
