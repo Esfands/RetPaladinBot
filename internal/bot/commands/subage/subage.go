@@ -49,7 +49,7 @@ func (c *SubageCommand) DynamicDescription() []string {
 		"If no channel is given it will default to EsfandTV",
 		"<br/>",
 		"Check your subage to EsfandTV.",
-		fmt.Sprintf("<code>%vsubage (YourUsername)</code>", prefix),
+		fmt.Sprintf("<code>%vsubage</code>", prefix),
 		"<br/>",
 		"Check subage for another user in Esfand's channel.",
 		fmt.Sprintf("<code>%vsubage (username)</code>", prefix),
