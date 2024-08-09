@@ -37,18 +37,18 @@ func (c *GDQCommand) Permissions() []domain.Permission {
 }
 
 func (c *GDQCommand) Description() string {
-	return "Get the current category of the stream."
+	return "Get a random stream donation from any GDQ event."
 }
 
 func (c *GDQCommand) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
-		"Gives the current category of the stream",
+		"Gives you a random donation from the GDQ events",
 		"<br/>",
-		fmt.Sprintf("<code>%vgame</code>", prefix),
+		fmt.Sprintf("<code>%vgdq</code>", prefix),
 		"<br/>",
-		fmt.Sprintf("<code>%vcategory</code>", prefix),
+		fmt.Sprintf("<code>%vgamesdonequick</code>", prefix),
 	}
 }
 
@@ -99,11 +99,4 @@ func (c *GDQCommand) Code(user twitch.User, context []string) (string, error) {
 	}
 
 	return fmt.Sprintf("@%v [%v] %v", target, gdqResp.EventName, gdqResp.Comment), nil
-}
-
-type GDQResponse struct {
-	Event     int    `json:"event"`
-	Date      string `json:"date"`
-	Comment   string `json:"comment"`
-	EventName string `json:"eventName"`
 }
