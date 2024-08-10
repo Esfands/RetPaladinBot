@@ -61,7 +61,7 @@ func (c *SubageCommand) DynamicDescription() []string {
 
 func (c *SubageCommand) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
-		EnabledOnline:  true,
+		EnabledOnline:  false,
 		EnabledOffline: true,
 	}
 }
