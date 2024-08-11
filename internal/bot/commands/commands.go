@@ -11,6 +11,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot/commands/game"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/gdq"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/help"
+	"github.com/esfands/retpaladinbot/internal/bot/commands/isbanned"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/ping"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/song"
 	"github.com/esfands/retpaladinbot/internal/bot/commands/subage"
@@ -67,6 +68,7 @@ func (cm *CommandManager) loadDefaultCommands() []domain.DefaultCommand {
 		gdq.NewGDQCommand(cm.gctx),
 		subage.NewSubageCommand(cm.gctx),
 		temperature.NewTemperatureCommand(cm.gctx),
+		isbanned.NewIsBannedCommand(cm.gctx),
 	}
 }
 
