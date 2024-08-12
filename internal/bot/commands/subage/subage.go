@@ -87,13 +87,8 @@ func (c *SubageCommand) Code(user twitch.User, context []string) (string, error)
 	}
 
 	// Remove "@" if it exists in targetUser or targetChannel
-	if strings.HasPrefix(targetUser, "@") {
-		targetUser = targetUser[1:]
-	}
-
-	if strings.HasPrefix(targetChannel, "@") {
-		targetChannel = targetChannel[1:]
-	}
+	targetUser = strings.TrimPrefix(targetUser, "@")
+	targetChannel = strings.TrimPrefix(targetChannel, "@")
 
 	// Begin logic to make the API request
 	url := "https://api.ivr.fi/"
@@ -125,8 +120,9 @@ func (c *SubageCommand) Code(user twitch.User, context []string) (string, error)
 	}
 
 	oldSub := subageRes.Cumulative
+
 	// If they're not subbed...
-	if subageRes.Cumulative == nil {
+	if subageRes.Meta == nil {
 		if oldSub == nil || oldSub.Months == 0 {
 			return fmt.Sprintf("%s is not subbed to %s and never has been.", targetUser, targetChannel), nil
 		} else {
