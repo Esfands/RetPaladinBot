@@ -99,9 +99,16 @@ func (rg *RouteGroup) GetCommandByName(ctx *respond.Ctx) error {
 			return errors.ErrInternalServerError().SetDetail(err.Error())
 		}
 
+		// Retrieve permissions
+		convertedPermissions, err := utils.ConvertJSONStringToSlice(storedDefaultCommand.Permissions)
+		if err != nil {
+			return errors.ErrInternalServerError().SetDetail(err.Error())
+		}
+
 		command := domain.Command{
 			Name:               storedDefaultCommand.Name,
 			Aliases:            convertedAliases,
+			Permissions:        convertToPermissions(convertedPermissions),
 			Description:        storedDefaultCommand.Description,
 			DynamicDescription: convertedDynamicDescription,
 			GlobalCooldown:     storedDefaultCommand.GlobalCooldown,
