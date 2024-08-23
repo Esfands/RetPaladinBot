@@ -14,6 +14,7 @@ import (
 	"github.com/esfands/retpaladinbot/internal/bot"
 	"github.com/esfands/retpaladinbot/internal/global"
 	"github.com/esfands/retpaladinbot/internal/rest"
+	"github.com/esfands/retpaladinbot/internal/services/auth"
 	"github.com/esfands/retpaladinbot/internal/services/helix"
 	"github.com/esfands/retpaladinbot/internal/services/scheduler"
 	"github.com/esfands/retpaladinbot/internal/services/turso"
@@ -87,6 +88,7 @@ func main() {
 		gctx.Crate().Helix, err = helix.Setup(gctx, gctx.Crate().Scheduler, helix.SetupOptions{
 			ClientID:     cfg.Twitch.Helix.ClientID,
 			ClientSecret: cfg.Twitch.Helix.ClientSecret,
+			RedirectURI:  cfg.Twitch.Helix.RedirectURI,
 		})
 		if err != nil {
 			slog.Error("Error setting up Helix API", "error", err)
@@ -95,6 +97,17 @@ func main() {
 		}
 
 		slog.Info("Helix API setup complete")
+	}
+	{
+		slog.Info("Setting up auth")
+		gctx.Crate().Auth = auth.Setup(
+			"Super secret JWT token secret that should be stored properly",
+			"localhost",
+			true,
+			gctx.Config(),
+		)
+
+		slog.Info("Auth setup complete")
 	}
 
 	interrupt := make(chan os.Signal, 1)

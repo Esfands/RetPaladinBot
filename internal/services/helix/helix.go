@@ -12,6 +12,7 @@ import (
 type SetupOptions struct {
 	ClientID     string
 	ClientSecret string
+	RedirectURI  string
 }
 
 func Setup(ctx context.Context, scheduler scheduler.Service, opts SetupOptions) (Service, error) {
@@ -21,6 +22,7 @@ func Setup(ctx context.Context, scheduler scheduler.Service, opts SetupOptions) 
 	svc.client, err = helix.NewClientWithContext(ctx, &helix.Options{
 		ClientID:     opts.ClientID,
 		ClientSecret: opts.ClientSecret,
+		RedirectURI:  opts.RedirectURI,
 	})
 	if err != nil {
 		return nil, err
