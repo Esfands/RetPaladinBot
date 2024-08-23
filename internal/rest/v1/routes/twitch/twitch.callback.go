@@ -14,15 +14,16 @@ import (
 
 func (rg *RouteGroup) LoginCallback(ctx *respond.Ctx) error {
 	queries := ctx.Queries()
-	slog.Info("[twitch-login-callback] received queries", "queries", queries)
 	state := queries["state"]
 	code := queries["code"]
 
+	// Ensure state and code is present
 	if state == "" || code == "" {
 		slog.Error("[twitch-login-callback] missing state or code", "state", state, "code", code)
 		return errors.ErrUnauthorized()
 	}
 
+	// Validate the CSRF token
 	csrfToken, _, err := rg.gctx.Crate().Auth.ValidateCSRFToken(
 		state,
 		utils.B2S(ctx.Request().Header.Cookie(auth.CookieCSRF)),
@@ -34,6 +35,7 @@ func (rg *RouteGroup) LoginCallback(ctx *respond.Ctx) error {
 
 	ctx.Cookie(csrfToken)
 
+	// Exchange code for token
 	twitchToken, err := rg.gctx.Crate().Auth.TwitchExchange(
 		context.Background(),
 		code,
@@ -43,8 +45,10 @@ func (rg *RouteGroup) LoginCallback(ctx *respond.Ctx) error {
 		return err
 	}
 
+	// Set the user access token
 	rg.gctx.Crate().Helix.Client().SetUserAccessToken(twitchToken.AccessToken)
 
+	// Get user that authenticated
 	userReq, err := rg.gctx.Crate().Helix.Client().GetUsers(&helix.UsersParams{})
 	if err != nil {
 		slog.Error("[twitch-login-callback] error getting user", "error", err.Error())
@@ -52,5 +56,6 @@ func (rg *RouteGroup) LoginCallback(ctx *respond.Ctx) error {
 	}
 
 	fmt.Println(userReq.Data.Users)
+
 	return nil
 }
