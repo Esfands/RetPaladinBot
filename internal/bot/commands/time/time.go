@@ -10,35 +10,35 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type TimeCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewTimeCommand(gctx global.Context) *TimeCommand {
-	cmd := &TimeCommand{
+func NewTimeCommand(gctx global.Context) *Command {
+	cmd := &Command{
 		gctx: gctx,
 	}
 
 	return cmd
 }
 
-func (c *TimeCommand) Name() string {
+func (c *Command) Name() string {
 	return "time"
 }
 
-func (c *TimeCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *TimeCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *TimeCommand) Description() string {
+func (c *Command) Description() string {
 	return "Returns the current time of Esfand in CST."
 }
 
-func (c *TimeCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -48,22 +48,22 @@ func (c *TimeCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *TimeCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *TimeCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *TimeCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *TimeCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	location, err := time.LoadLocation("America/Chicago")

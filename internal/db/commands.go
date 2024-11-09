@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"log/slog"
 )
 
 type CustomCommand struct {
@@ -16,7 +18,12 @@ func (q *Queries) InsertCustomCommand(ctx context.Context, command CustomCommand
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(command.Name, command.Response, command.UsageCount)
 	if err != nil {
@@ -32,7 +39,12 @@ func (q *Queries) UpdateCustomCommand(ctx context.Context, command CustomCommand
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(command.Response, command.Name)
 	if err != nil {
@@ -47,7 +59,12 @@ func (q *Queries) IncrementCustomCommandUsageCount(ctx context.Context, name str
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(name)
 	if err != nil {
@@ -63,7 +80,12 @@ func (q *Queries) DeleteCustomCommand(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(name)
 	if err != nil {
@@ -79,7 +101,12 @@ func (q *Queries) GetAllCustomCommands(ctx context.Context) ([]CustomCommand, er
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			slog.Error("Failed to close rows", "error", err)
+		}
+	}(rows)
 
 	var commands []CustomCommand
 	for rows.Next() {
@@ -123,7 +150,12 @@ func (q *Queries) InsertDefaultCommand(ctx context.Context, command DefaultComma
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(
 		command.Name,
@@ -148,7 +180,12 @@ func (q *Queries) UpdateDefaultCommand(ctx context.Context, command DefaultComma
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(
 		command.Aliases,
@@ -170,7 +207,12 @@ func (q *Queries) IncrementDefaultCommandUsageCount(ctx context.Context, name st
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(name)
 	return err
@@ -182,7 +224,12 @@ func (q *Queries) DeleteDefaultCommand(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(name)
 	return err
@@ -194,7 +241,12 @@ func (q *Queries) GetAllDefaultCommands(ctx context.Context) ([]DefaultCommand, 
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			slog.Error("Failed to close rows", "error", err)
+		}
+	}(rows)
 
 	var commands []DefaultCommand
 	for rows.Next() {

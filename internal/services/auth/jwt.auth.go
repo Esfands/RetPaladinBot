@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/esfands/retpaladinbot/pkg/utils"
-	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func (a *authmen) SignJWT(secret string, claim jwt.Claims) (string, error) {
@@ -35,8 +35,7 @@ func (a *authmen) VerifyJWT(token []string, out jwt.Claims) (*jwt.Token, error) 
 }
 
 type JWTClaimUser struct {
-	AccountID     string `json:"id"`
-	IntegrationID string `json:"iid"`
+	TwitchID string `json:"tid"`
 
 	jwt.RegisteredClaims
 }

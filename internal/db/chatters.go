@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"log/slog"
 )
 
 // Chatter represents the chatter model
@@ -17,7 +19,12 @@ func (q *Queries) InsertChatter(ctx context.Context, chatter Chatter) error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(chatter.TID, chatter.Username, chatter.DisplayName)
 	if err != nil {

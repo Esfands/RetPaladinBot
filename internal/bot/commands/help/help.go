@@ -9,35 +9,35 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type HelpCommand struct {
+type Command struct {
 	gctx    global.Context
 	version string
 }
 
-func NewHelpCommand(gctx global.Context, version string) *HelpCommand {
-	return &HelpCommand{
+func NewHelpCommand(gctx global.Context, version string) *Command {
+	return &Command{
 		gctx:    gctx,
 		version: version,
 	}
 }
 
-func (c *HelpCommand) Name() string {
+func (c *Command) Name() string {
 	return "help"
 }
 
-func (c *HelpCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{"about", "commands"}
 }
 
-func (c *HelpCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *HelpCommand) Description() string {
+func (c *Command) Description() string {
 	return "Gives you information about the bot."
 }
 
-func (c *HelpCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -51,22 +51,22 @@ func (c *HelpCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *HelpCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *HelpCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *HelpCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *HelpCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	if len(context) >= 1 {
 		url := fmt.Sprintf("https://www.retpaladinbot.com/commands/%v", context[0])
 		return fmt.Sprintf(`@%v help for the command "%v": %v`, user.Name, strings.ToLower(context[0]), url), nil

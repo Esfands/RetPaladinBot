@@ -13,35 +13,35 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type SongCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewSongCommand(gctx global.Context) *SongCommand {
-	cmd := &SongCommand{
+func NewSongCommand(gctx global.Context) *Command {
+	cmd := &Command{
 		gctx: gctx,
 	}
 
 	return cmd
 }
 
-func (c *SongCommand) Name() string {
+func (c *Command) Name() string {
 	return "song"
 }
 
-func (c *SongCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *SongCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *SongCommand) Description() string {
+func (c *Command) Description() string {
 	return "Get the latest track Esfand has listened to."
 }
 
-func (c *SongCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -51,22 +51,22 @@ func (c *SongCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *SongCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *SongCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *SongCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *SongCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	req, err := sling.New().Get(fmt.Sprintf("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=esfandtv&api_key=%v&format=json", c.gctx.Config().APIKeys.LastFM)).Request()
@@ -91,14 +91,14 @@ func (c *SongCommand) Code(user twitch.User, context []string) (string, error) {
 		return "", err
 	}
 
-	if len(history.Recenttracks.Track) == 0 {
+	if len(history.RecentTracks.Track) == 0 {
 		return fmt.Sprintf("@%v, nothing has been listened to yet.", user.Name), nil
 	}
 
 	return fmt.Sprintf(
 		"@%v, current song: %v - %v | Full history -> https://www.last.fm/user/esfandtv/library",
 		target,
-		history.Recenttracks.Track[0].Name,
-		history.Recenttracks.Track[0].Artist.Text,
+		history.RecentTracks.Track[0].Name,
+		history.RecentTracks.Track[0].Artist.Text,
 	), nil
 }

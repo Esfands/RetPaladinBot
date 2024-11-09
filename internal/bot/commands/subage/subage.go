@@ -16,33 +16,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type SubageCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewSubageCommand(gctx global.Context) *SubageCommand {
-	return &SubageCommand{
+func NewSubageCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *SubageCommand) Name() string {
+func (c *Command) Name() string {
 	return "subage"
 }
 
-func (c *SubageCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{"sa"}
 }
 
-func (c *SubageCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *SubageCommand) Description() string {
+func (c *Command) Description() string {
 	return "Get subage of a user for a specific channel. Defaults to Esfands."
 }
 
-func (c *SubageCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -59,22 +59,22 @@ func (c *SubageCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *SubageCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  false,
 		EnabledOffline: true,
 	}
 }
 
-func (c *SubageCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *SubageCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *SubageCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	// Parse targetUser and targetChannel from context
 	targetUser := user.Name
 	if len(context) > 0 {

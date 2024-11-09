@@ -35,7 +35,7 @@ func main() {
 		Version = version
 	}
 
-	// Intialize the logger depending on the version of the app
+	// Initialize the logger depending on the version of the app
 	var logger *slog.Logger
 	if version == "dev" {
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{

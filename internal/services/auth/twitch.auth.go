@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	oidc "github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc"
 	"github.com/esfands/retpaladinbot/config"
 	"golang.org/x/oauth2"
 )

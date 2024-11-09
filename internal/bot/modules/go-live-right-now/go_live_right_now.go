@@ -10,11 +10,11 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-type GoLiveRightNowModule struct {
+type Module struct {
 	scheduler *gocron.Scheduler
 }
 
-func NewGoLiveRightNowModule(gctx global.Context, client *twitch.Client) *GoLiveRightNowModule {
+func NewGoLiveRightNowModule(gctx global.Context, client *twitch.Client) *Module {
 	// Create a new scheduler
 	s := gocron.NewScheduler(time.UTC)
 
@@ -57,7 +57,7 @@ func NewGoLiveRightNowModule(gctx global.Context, client *twitch.Client) *GoLive
 		fmt.Println("Scheduler stopped")
 	}()
 
-	return &GoLiveRightNowModule{
+	return &Module{
 		scheduler: s,
 	}
 }

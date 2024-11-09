@@ -28,8 +28,8 @@ func Setup(ctx context.Context, scheduler scheduler.Service, opts SetupOptions) 
 		return nil, err
 	}
 
-	// TODO: Refresh this token every 50 days
-	_, err = scheduler.Scheduler().Every(50).Days().Do(func() {
+	// Refresh this token every 1 day
+	_, err = scheduler.Scheduler().Every(1).Days().Do(func() {
 		slog.Debug("refreshing twitch app access token")
 		err := svc.refreshAppAccessToken()
 		if err != nil {

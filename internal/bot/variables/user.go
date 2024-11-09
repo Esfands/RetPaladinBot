@@ -30,7 +30,7 @@ func (v *UserVariable) GetAliases() []string {
 	return []string{}
 }
 
-func (v *UserVariable) Code(ctx context.Context, user twitch.User, cmdContext []string, context []string, message string) string {
+func (v *UserVariable) Code(_ context.Context, user twitch.User, cmdContext []string, _ []string, _ string) string {
 	target := utils.GetTarget(user, cmdContext[1:])
 
 	return fmt.Sprintf("@%v", target)

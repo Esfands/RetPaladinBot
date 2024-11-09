@@ -12,33 +12,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type UptimeCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewUptimeCommand(gctx global.Context) *UptimeCommand {
-	return &UptimeCommand{
+func NewUptimeCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *UptimeCommand) Name() string {
+func (c *Command) Name() string {
 	return "uptime"
 }
 
-func (c *UptimeCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *UptimeCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *UptimeCommand) Description() string {
+func (c *Command) Description() string {
 	return "Gets the current time elapsed since the stream started."
 }
 
-func (c *UptimeCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -48,22 +48,22 @@ func (c *UptimeCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *UptimeCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *UptimeCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *UptimeCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *UptimeCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	stream, err := c.gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(c.gctx)

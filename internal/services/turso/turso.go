@@ -22,7 +22,7 @@ func Setup(ctx context.Context, opts SetupOptions) (Service, error) {
 
 	svc.db, err = sql.Open("libsql", opts.URL)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error opening database: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error opening database: %v\n", err)
 		return nil, err
 	}
 
@@ -30,7 +30,7 @@ func Setup(ctx context.Context, opts SetupOptions) (Service, error) {
 
 	err = svc.db.Ping()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error pinging database: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error pinging database: %v\n", err)
 		return nil, err
 	}
 
@@ -40,7 +40,10 @@ func Setup(ctx context.Context, opts SetupOptions) (Service, error) {
 
 	go func() {
 		<-ctx.Done()
-		svc.db.Close()
+		err := svc.db.Close()
+		if err != nil {
+			return
+		}
 		slog.Info("Turso database connection closed")
 	}()
 

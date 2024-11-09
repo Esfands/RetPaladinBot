@@ -7,7 +7,7 @@ import (
 )
 
 type ModuleManager struct {
-	GoLiveRightNow *goliverightnow.GoLiveRightNowModule
+	GoLiveRightNow *goliverightnow.Module
 }
 
 func NewModuleManager(gctx global.Context, client *twitch.Client) (*ModuleManager, error) {

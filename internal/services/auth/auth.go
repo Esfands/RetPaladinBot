@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/esfands/retpaladinbot/config"
-	fiber "github.com/gofiber/fiber/v2"
-	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/oauth2"
 )
 
@@ -20,7 +20,7 @@ type Authmen interface {
 
 	CreateCSRFToken(state string) (token string, err error)
 	ValidateCSRFToken(state, cookieData string) (*fiber.Cookie, *JWTClaimOAuth2CSRF, error)
-	CreateAccessToken(accountID, integrationID string) (string, time.Time, error)
+	CreateAccessToken(twitchID string) (string, time.Time, error)
 
 	Cookie(key, token string, duration time.Duration) *fiber.Cookie
 
@@ -118,12 +118,11 @@ func (a *authmen) ValidateCSRFToken(
 }
 
 // CreateAccessToken creates a new access token which represents a user.
-func (a *authmen) CreateAccessToken(accountID, integrationID string) (string, time.Time, error) {
+func (a *authmen) CreateAccessToken(twitchID string) (string, time.Time, error) {
 	expireAt := time.Now().Add(time.Hour * 24 * 7) // 7 days
 
 	token, err := a.SignJWT(a.JWTSecret, &JWTClaimUser{
-		AccountID:     accountID,
-		IntegrationID: integrationID,
+		TwitchID: twitchID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "retpaladinbot-api",
 			ExpiresAt: &jwt.NumericDate{Time: expireAt},

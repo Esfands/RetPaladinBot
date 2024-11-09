@@ -2,8 +2,9 @@ package twitch
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
+	"net/http"
+	"time"
 
 	"github.com/esfands/retpaladinbot/internal/rest/v1/respond"
 	"github.com/esfands/retpaladinbot/internal/services/auth"
@@ -55,7 +56,21 @@ func (rg *RouteGroup) LoginCallback(ctx *respond.Ctx) error {
 		return errors.ErrInternalServerError()
 	}
 
-	fmt.Println(userReq.Data.Users)
+	user := userReq.Data.Users[0]
 
-	return nil
+	// TODO: Check if user is whitelisted to be able to access the dashboard
+
+	accessToken, expiry, err := rg.gctx.Crate().Auth.CreateAccessToken(
+		user.ID,
+	)
+	if err != nil {
+		slog.Error("[twitch-login-callback] error creating access token", "error", err.Error())
+		return errors.ErrInternalServerError()
+	}
+
+	authCookie := rg.gctx.Crate().Auth.Cookie(string(auth.CookieAuth), accessToken, time.Until(expiry))
+
+	ctx.Cookie(authCookie)
+
+	return ctx.Redirect("http://localhost:3001/dashboard", http.StatusSeeOther)
 }

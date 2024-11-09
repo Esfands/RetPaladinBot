@@ -14,33 +14,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type DadJokeCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewDadJokeCommand(gctx global.Context) *DadJokeCommand {
-	return &DadJokeCommand{
+func NewDadJokeCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *DadJokeCommand) Name() string {
+func (c *Command) Name() string {
 	return "dadjoke"
 }
 
-func (c *DadJokeCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *DadJokeCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *DadJokeCommand) Description() string {
+func (c *Command) Description() string {
 	return "Get a dad joke 4Head"
 }
 
-func (c *DadJokeCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -50,22 +50,22 @@ func (c *DadJokeCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *DadJokeCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *DadJokeCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *DadJokeCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *DadJokeCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	url := "https://icanhazdadjoke.com/"
@@ -90,7 +90,7 @@ func (c *DadJokeCommand) Code(user twitch.User, context []string) (string, error
 		return fmt.Sprintf("@%v failed to get a dad joke. FeelsBadMan", user.Name), err
 	}
 
-	var joke DadJokeResponse
+	var joke Response
 	if err := json.Unmarshal(body, &joke); err != nil {
 		slog.Error("Failed to unmarshal dad joke response", "error", err)
 		return fmt.Sprintf("@%v failed to get a dad joke. FeelsBadMan", user.Name), err
