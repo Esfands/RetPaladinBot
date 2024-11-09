@@ -1,6 +1,6 @@
 package gdq
 
-type GDQResponse struct {
+type Response struct {
 	Event     int    `json:"event"`
 	Date      string `json:"date"`
 	Comment   string `json:"comment"`

@@ -12,33 +12,33 @@ import (
 	"github.com/nicklaw5/helix/v2"
 )
 
-type AccountAgeCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewAccountAgeCommand(gctx global.Context) *AccountAgeCommand {
-	return &AccountAgeCommand{
+func NewAccountAgeCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *AccountAgeCommand) Name() string {
+func (c *Command) Name() string {
 	return "accountage"
 }
 
-func (c *AccountAgeCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *AccountAgeCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *AccountAgeCommand) Description() string {
+func (c *Command) Description() string {
 	return "Check the age of your account."
 }
 
-func (c *AccountAgeCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -48,22 +48,22 @@ func (c *AccountAgeCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *AccountAgeCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *AccountAgeCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *AccountAgeCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *AccountAgeCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	res, err := c.gctx.Crate().Helix.Client().GetUsers(&helix.UsersParams{

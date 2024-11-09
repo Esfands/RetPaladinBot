@@ -14,33 +14,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type IsBannedCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewIsBannedCommand(gctx global.Context) *IsBannedCommand {
-	return &IsBannedCommand{
+func NewIsBannedCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *IsBannedCommand) Name() string {
+func (c *Command) Name() string {
 	return "isbanned"
 }
 
-func (c *IsBannedCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *IsBannedCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *IsBannedCommand) Description() string {
+func (c *Command) Description() string {
 	return "Check if a user is banned on Twitch."
 }
 
-func (c *IsBannedCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -50,22 +50,22 @@ func (c *IsBannedCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *IsBannedCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *IsBannedCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *IsBannedCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *IsBannedCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	url := "https://api.ivr.fi"

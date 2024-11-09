@@ -9,6 +9,7 @@ twitch:
     client_id:
     client_secret:
     eventsub_secret:
+    redirect_uri:
 
 turso:
   url: 

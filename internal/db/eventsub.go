@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"log/slog"
 )
 
 type StreamStatus struct {
@@ -22,7 +23,12 @@ func (q *Queries) InsertStream(ctx context.Context, stream StreamStatus) error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(
 		stream.StreamID,
@@ -66,7 +72,12 @@ func (q *Queries) StreamWentOffline(ctx context.Context, streamID string, timeWe
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			slog.Error("Failed to close statement", "error", err)
+		}
+	}(stmt)
 
 	_, err = stmt.Exec(timeWentOffline, streamID)
 	if err != nil {

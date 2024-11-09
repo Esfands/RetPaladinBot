@@ -9,33 +9,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type TemperatureCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewTemperatureCommand(gctx global.Context) *TemperatureCommand {
-	return &TemperatureCommand{
+func NewTemperatureCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *TemperatureCommand) Name() string {
+func (c *Command) Name() string {
 	return "temperature"
 }
 
-func (c *TemperatureCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{"temp"}
 }
 
-func (c *TemperatureCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *TemperatureCommand) Description() string {
+func (c *Command) Description() string {
 	return "Translates a temperature from Fahrenheit to Celsius and vice versa."
 }
 
-func (c *TemperatureCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -47,22 +47,22 @@ func (c *TemperatureCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *TemperatureCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  false,
 		EnabledOffline: true,
 	}
 }
 
-func (c *TemperatureCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *TemperatureCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *TemperatureCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	if len(context) < 2 {

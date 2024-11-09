@@ -14,33 +14,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type GDQCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewGDQCommand(gctx global.Context) *GDQCommand {
-	return &GDQCommand{
+func NewGDQCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *GDQCommand) Name() string {
+func (c *Command) Name() string {
 	return "gamesdonequick"
 }
 
-func (c *GDQCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{"gdq"}
 }
 
-func (c *GDQCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *GDQCommand) Description() string {
+func (c *Command) Description() string {
 	return "Get a random stream donation from any GDQ event."
 }
 
-func (c *GDQCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -52,22 +52,22 @@ func (c *GDQCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *GDQCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  false,
 		EnabledOffline: true,
 	}
 }
 
-func (c *GDQCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *GDQCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *GDQCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	url := "https://api.ivr.fi/"
@@ -91,7 +91,7 @@ func (c *GDQCommand) Code(user twitch.User, context []string) (string, error) {
 		return "Error reading GDQ donation FeelsBadMan", nil
 	}
 
-	var gdqResp GDQResponse
+	var gdqResp Response
 	err = json.Unmarshal(body, &gdqResp)
 	if err != nil {
 		slog.Error("[gdq-cmd] error unmarshalling gdq donation", "error", err.Error())

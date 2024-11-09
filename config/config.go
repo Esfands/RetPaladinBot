@@ -26,6 +26,7 @@ type Config struct {
 			ClientID       string `mapstructure:"client_id" json:"client_id"`
 			ClientSecret   string `mapstructure:"client_secret" json:"client_secret"`
 			EventSubSecret string `mapstructure:"eventsub_secret" json:"eventsub_secret"`
+			RedirectURI    string `mapstructure:"redirect_uri" json:"redirect_uri"`
 		} `mapstructure:"helix" json:"helix"`
 	} `mapstructure:"twitch" json:"twitch"`
 

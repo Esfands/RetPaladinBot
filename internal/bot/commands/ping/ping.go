@@ -10,33 +10,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type PingCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewPingCommand(gctx global.Context) *PingCommand {
-	return &PingCommand{
+func NewPingCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *PingCommand) Name() string {
+func (c *Command) Name() string {
 	return "ping"
 }
 
-func (c *PingCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{}
 }
 
-func (c *PingCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *PingCommand) Description() string {
+func (c *Command) Description() string {
 	return "Ping the bot."
 }
 
-func (c *PingCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -46,22 +46,22 @@ func (c *PingCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *PingCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *PingCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *PingCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *PingCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	uptime := utils.TimeDifference(c.gctx.Config().Timestamp, time.Now(), true)
 
 	return fmt.Sprintf("@%v, FeelsOkayMan 🏓 Uptime: %v", user.Name, uptime), nil

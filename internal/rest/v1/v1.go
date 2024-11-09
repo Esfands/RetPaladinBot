@@ -25,5 +25,7 @@ func New(gctx global.Context, router fiber.Router) {
 	router.Get("/commands/:name", ctx(commandRotues.GetCommandByName))
 
 	twitchRoutes := twitch.NewRouteGroup(gctx)
+	router.Get("/twitch/login", ctx(twitchRoutes.Login))
+	router.Get("/twitch/redirect", ctx(twitchRoutes.LoginCallback))
 	router.Post("/twitch/eventsub", ctx(twitchRoutes.EventSubRecievedNotification))
 }

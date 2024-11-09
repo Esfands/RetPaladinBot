@@ -11,40 +11,40 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type CommandCommand struct {
+type Command struct {
 	gctx    global.Context
 	manager cmdmanager.CommandManagerInterface
 }
 
-func NewCommandCommand(gctx global.Context, manager cmdmanager.CommandManagerInterface) *CommandCommand {
-	return &CommandCommand{
+func NewCommandCommand(gctx global.Context, manager cmdmanager.CommandManagerInterface) *Command {
+	return &Command{
 		gctx:    gctx,
 		manager: manager,
 	}
 }
 
-func (c *CommandCommand) Name() string {
+func (c *Command) Name() string {
 	return "command"
 }
 
-func (c *CommandCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{
 		"cmd",
 	}
 }
 
-func (c *CommandCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{
 		domain.PermissionBroadcaster,
 		domain.PermissionModerator,
 	}
 }
 
-func (c *CommandCommand) Description() string {
+func (c *Command) Description() string {
 	return "Create/edit/delete custom commands."
 }
 
-func (c *CommandCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -60,22 +60,22 @@ func (c *CommandCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *CommandCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *CommandCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *CommandCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *CommandCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	if len(context) < 2 {
 		return "", errors.New("invalid command format")
 	}
@@ -103,7 +103,7 @@ func (c *CommandCommand) Code(user twitch.User, context []string) (string, error
 	}
 }
 
-func (c *CommandCommand) createCommand(name, response string) (string, error) {
+func (c *Command) createCommand(name, response string) (string, error) {
 	// Check if the command already exists
 	if c.manager.CustomCommandExists(name) {
 		return "", errors.New("command already exists")
@@ -121,7 +121,7 @@ func (c *CommandCommand) createCommand(name, response string) (string, error) {
 	return fmt.Sprintf("Command '%s' created with response: %s", name, response), nil
 }
 
-func (c *CommandCommand) editCommand(name, response string) (string, error) {
+func (c *Command) editCommand(name, response string) (string, error) {
 	// Update the command's response
 	err := c.manager.UpdateCustomCommand(domain.CustomCommand{
 		Name:     name,
@@ -134,7 +134,7 @@ func (c *CommandCommand) editCommand(name, response string) (string, error) {
 	return fmt.Sprintf("Command '%s' updated with new response: %s", name, response), nil
 }
 
-func (c *CommandCommand) deleteCommand(name string) (string, error) {
+func (c *Command) deleteCommand(name string) (string, error) {
 	// Delete the command from the manager's CustomCommands slice
 	err := c.manager.DeleteCustomCommand(name)
 	if err != nil {

@@ -48,8 +48,14 @@ func StartBot(gctx global.Context, cfg *config.Config, version string) {
 		<-gctx.Done()
 
 		slog.Info("Twitch bot shutting down...")
-		conn.client.Disconnect()
+		err := conn.client.Disconnect()
+		if err != nil {
+			return
+		}
 	}()
 
-	conn.client.Connect()
+	err = conn.client.Connect()
+	if err != nil {
+		return
+	}
 }

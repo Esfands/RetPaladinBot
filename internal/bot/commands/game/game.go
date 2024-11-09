@@ -11,33 +11,33 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-type GameCommand struct {
+type Command struct {
 	gctx global.Context
 }
 
-func NewGameCommand(gctx global.Context) *GameCommand {
-	return &GameCommand{
+func NewGameCommand(gctx global.Context) *Command {
+	return &Command{
 		gctx: gctx,
 	}
 }
 
-func (c *GameCommand) Name() string {
+func (c *Command) Name() string {
 	return "game"
 }
 
-func (c *GameCommand) Aliases() []string {
+func (c *Command) Aliases() []string {
 	return []string{"category"}
 }
 
-func (c *GameCommand) Permissions() []domain.Permission {
+func (c *Command) Permissions() []domain.Permission {
 	return []domain.Permission{}
 }
 
-func (c *GameCommand) Description() string {
+func (c *Command) Description() string {
 	return "Get the current category of the stream."
 }
 
-func (c *GameCommand) DynamicDescription() []string {
+func (c *Command) DynamicDescription() []string {
 	prefix := c.gctx.Config().Twitch.Bot.Prefix
 
 	return []string{
@@ -49,22 +49,22 @@ func (c *GameCommand) DynamicDescription() []string {
 	}
 }
 
-func (c *GameCommand) Conditions() domain.DefaultCommandConditions {
+func (c *Command) Conditions() domain.DefaultCommandConditions {
 	return domain.DefaultCommandConditions{
 		EnabledOnline:  true,
 		EnabledOffline: true,
 	}
 }
 
-func (c *GameCommand) UserCooldown() int {
+func (c *Command) UserCooldown() int {
 	return 30
 }
 
-func (c *GameCommand) GlobalCooldown() int {
+func (c *Command) GlobalCooldown() int {
 	return 10
 }
 
-func (c *GameCommand) Code(user twitch.User, context []string) (string, error) {
+func (c *Command) Code(user twitch.User, context []string) (string, error) {
 	target := utils.GetTarget(user, context)
 
 	stream, err := c.gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(c.gctx)

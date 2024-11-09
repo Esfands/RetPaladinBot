@@ -1,10 +1,10 @@
 package song
 
 type Response struct {
-	Recenttracks Recenttracks `json:"recenttracks"`
+	RecentTracks RecentTracks `json:"recenttracks"`
 }
 
-type Recenttracks struct {
+type RecentTracks struct {
 	Track []Track `json:"track"`
 	Attr  Attr    `json:"@attr"`
 }
