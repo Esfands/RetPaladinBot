@@ -96,6 +96,8 @@ func executeCommand(gctx global.Context, user twitch.User, context []string, com
 		slog.Error("Failed to update default command usage", "error", err.Error())
 	}
 
+	slog.Info("Command executed", "command", command.Name(), "user", user.DisplayName, "channel", gctx.Config().Twitch.Bot.Channel)
+
 	return response, nil
 }
 
@@ -109,20 +111,26 @@ func handleCommand(gctx global.Context, variables variables.ServiceI, commandMan
 
 	for _, dc := range commandManager.DefaultCommands {
 		if isCommandMatch(strings.ToLower(context[0]), dc) {
-			// Check to see if the command is enabled offline, if it is and the command can't be ran when live, return.
-			if dc.Conditions().EnabledOffline {
-				streamStatus, err := gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(gctx)
-				if err != nil {
-					slog.Error("Failed to get most recent stream status", "error", err.Error())
-					return "", err
-				}
+			slog.Info("Command match found", "command", dc.Name())
 
-				if streamStatus.Live {
-					return "", nil
-				}
+			streamStatus, err := gctx.Crate().Turso.Queries().GetMostRecentStreamStatus(gctx)
+			if err != nil {
+				slog.Error("Failed to get most recent stream status", "error", err.Error())
+				return "", err
 			}
+			slog.Info("Stream status", "live", streamStatus.Live)
 
-			return executeCommand(gctx, user, context, dc)
+			if dc.Conditions().EnabledOffline && !streamStatus.Live {
+				// Command can run offline, and stream is offline
+				return executeCommand(gctx, user, context, dc)
+			} else if dc.Conditions().EnabledOnline && streamStatus.Live {
+				// Command can run online, and stream is live
+				return executeCommand(gctx, user, context, dc)
+			} else {
+				// Command does not meet the conditions to run
+				slog.Info("Command cannot run in the current stream status", "command", dc.Name(), "live", streamStatus.Live)
+				return "", nil
+			}
 		}
 	}
 

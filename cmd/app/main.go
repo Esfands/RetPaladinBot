@@ -141,7 +141,9 @@ func main() {
 	go func() {
 		defer wg.Done()
 
+		slog.Info("Starting bot")
 		bot.StartBot(gctx, cfg, Version)
+		slog.Info("Bot stopped")
 	}()
 
 	go func() {
